@@ -6,12 +6,6 @@ tags:
   - golang
 ---
 
-# Gin Example
-
-This example starts an [Gin](https://gin-gonic.com/) server.
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/dTvvSf)
-
 ## ✨ Features
 
 - Gin
@@ -19,8 +13,7 @@ This example starts an [Gin](https://gin-gonic.com/) server.
 
 ## 💁‍♀️ How to use
 
-- Connect to your Railway project `railway link`
-- Start the development server `railway run go run main.go`
+- Description of how to use
 
 ## 📝 Notes
 
