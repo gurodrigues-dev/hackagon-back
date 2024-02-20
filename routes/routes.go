@@ -2,7 +2,7 @@ package routes
 
 import (
 	"gin/config"
-	"gin/controllers"
+	"gin/internal/controllers"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -53,12 +53,7 @@ func HandleRequests() {
 	}
 
 	api := r.Group("/api/v1")
-	api.GET("/ping", controllers.Ping)
-	api.POST("/user", controllers.CreateUser)
-	api.GET("/user", authMiddleware, controllers.GetUser)
-	// api.PUT("/user", authMiddleware, controllers.UpdateUser)
-	api.DELETE("/user", authMiddleware, controllers.DeleteUser)
-	api.POST("/login", controllers.Login)
+	api.GET("/ping", authMiddleware, controllers.Ping)
 
 	r.Run(":9692")
 }
