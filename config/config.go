@@ -42,3 +42,7 @@ func Load(filename string) (*Config, error) {
 	config = &conf
 	return config, nil
 }
+
+func Get() *Config {
+	return config
+}

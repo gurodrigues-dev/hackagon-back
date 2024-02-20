@@ -1,15 +1,29 @@
 package main
 
 import (
-	"gin/routes"
-
-	"github.com/gin-gonic/gin"
+	"gin/config"
+	"gin/internal/controllers"
+	"gin/internal/service"
+	"gin/repository"
+	"log"
 )
 
-var Router *gin.Engine
-
 func main() {
+	config, err := config.Load("config/config.yaml")
+	if err != nil {
+		log.Fatalf("error loading config: %s", err.Error())
+	}
 
-	routes.HandleRequests()
+	repo, err := repository.NewPostgres()
+	if err != nil {
+		log.Fatalf("error creating repository: %s", err.Error())
+	}
+
+	service := service.New(repo)
+
+	controller := controllers.New(service)
+
+	log.Printf("initing service: %s", config.Name)
+	controller.Start()
 
 }

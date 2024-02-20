@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+	"gin/config"
 	"gin/internal/service"
 	"net/http"
 
@@ -60,17 +62,21 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func (ct *controller) Ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
-}
-
 func (ct *controller) Start() {
+
+	config := config.Get()
 
 	router := gin.Default()
 
 	api := router.Group("/api/v1")
 	api.GET("/ping", ct.Ping)
 
+	router.Run(fmt.Sprintf(":%d", config.Server.Port))
+
+}
+
+func (ct *controller) Ping(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
+	})
 }

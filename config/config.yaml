@@ -7,8 +7,8 @@ server:
   secret: hackagon
 
 database:
-  dbuser: postgres
+  dbuser: "postgres"
   dbport: 59499
-  dbhost: viaduct.proxy.rlwy.net
-  dbpassword: BaCfA-1AGce4-4bbeA241ECeC1g55Eea
-  dbname: railway
+  dbhost: "viaduct.proxy.rlwy.net"
+  dbpassword: "BaCfA-1AGce4-4bbeA241ECeC1g55Eea"
+  dbname: "railway"

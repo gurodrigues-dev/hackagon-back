@@ -5,16 +5,16 @@ import (
 )
 
 type Repository interface {
-	CreateQuestion()
-	ReadQuestion()
-	UpdateQuestion()
-	DeleteQuestion()
-	CreateTest()
-	ReadTest()
-	UpdateTest()
-	DeleteTest()
-	CreateUserResponse()
-	ReadUserResponse()
-	UpdateUserResponse()
-	DeleteUserResponse()
+	CreateQuestion() error
+	ReadQuestion() error
+	UpdateQuestion() error
+	DeleteQuestion() error
+	CreateTest() error
+	ReadTest() error
+	UpdateTest() error
+	DeleteTest() error
+	CreateUserResponse() error
+	ReadUserResponse() error
+	UpdateUserResponse() error
+	DeleteUserResponse() error
 }
