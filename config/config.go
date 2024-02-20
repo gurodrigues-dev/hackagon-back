@@ -3,38 +3,42 @@ package config
 import (
 	"os"
 
-	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v2"
 )
 
-func LoadEnvironmentVariables() error {
-	err := godotenv.Load(".env")
+type Config struct {
+	Name     string `yaml:"name"`
+	Database Database
+	Server   Server
+}
+
+type Server struct {
+	Host   string `yaml:"host"`
+	Port   int    `yaml:"port"`
+	Secret string `yaml:"string"`
+}
+
+type Database struct {
+	User     string `yaml:"dbuser"`
+	Port     string `yaml:"dbport"`
+	Host     string `yaml:"dbhost"`
+	Password string `yaml:"dbpassword"`
+	Name     string `yaml:"dbname"`
+}
+
+var config *Config
+
+func Load(filename string) (*Config, error) {
+	data, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
-}
+	var conf Config
+	if err := yaml.Unmarshal(data, &conf); err != nil {
+		return nil, err
+	}
 
-func GetDatabaseHost() string {
-	return os.Getenv("host")
-}
-
-func GetDatabaseName() string {
-	return os.Getenv("dbname")
-}
-
-func GetDatabaseUser() string {
-	return os.Getenv("user")
-}
-
-func GetDatabasePassword() string {
-	return os.Getenv("password")
-}
-
-func GetDatabasePort() string {
-	return os.Getenv("port")
-}
-
-func GetSecretKeyApi() string {
-	return os.Getenv("secret")
+	config = &conf
+	return config, nil
 }
