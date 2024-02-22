@@ -173,14 +173,6 @@ Os bots da comunidade no Discord são programas automatizados que oferecem uma v
 
 ![Texto alternativo](https://i.imgur.com/uUbNNVq.png)
 
-## Como Usar
-
-Para configurar e implantar um servidor web:
-
-1. Escolha um servidor web adequado para suas necessidades.
-2. Configure o servidor web de acordo com os requisitos do seu projeto.
-3. Carregue os recursos do seu site no sistema de arquivos do servidor.
-4. Teste o servidor web para garantir que esteja respondendo corretamente às solicitações dos clientes.
 
 ## Contribuição
 
