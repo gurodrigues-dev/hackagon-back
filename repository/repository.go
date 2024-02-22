@@ -1,20 +1,15 @@
 package repository
 
 import (
+	"context"
+	"gin/types"
+
 	_ "github.com/lib/pq"
 )
 
 type Repository interface {
-	CreateQuestion() error
-	ReadQuestion() error
-	UpdateQuestion() error
-	DeleteQuestion() error
-	CreateTest() error
-	ReadTest() error
-	UpdateTest() error
-	DeleteTest() error
-	CreateUserResponse() error
-	ReadUserResponse() error
-	UpdateUserResponse() error
-	DeleteUserResponse() error
+	CreateQuestion(ctx context.Context, question *types.Question) error
+	ReadQuestion(ctx context.Context, id *int) error
+	UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error
+	DeleteQuestion(ctx context.Context, id *int) error
 }
