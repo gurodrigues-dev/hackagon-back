@@ -1,6 +1,10 @@
 package service
 
-import "gin/repository"
+import (
+	"context"
+	"gin/repository"
+	"gin/types"
+)
 
 type Service struct {
 	repository repository.Repository
@@ -12,11 +16,12 @@ func New(repo repository.Repository) *Service {
 	}
 }
 
-func (s *Service) CreateQuestion() error {
+func (s *Service) CreateQuestion(ctx context.Context, question *types.Question) error {
+
 	return nil
 }
 
-func (s *Service) ReadQuestion() error {
+func (s *Service) ReadQuestion(ctx context.Context, id *int) error {
 	return nil
 }
 
@@ -25,37 +30,5 @@ func (s *Service) UpdateQuestion() error {
 }
 
 func (s *Service) DeleteQuestion() error {
-	return nil
-}
-
-func (s *Service) CreateTest() error {
-	return nil
-}
-
-func (s *Service) ReadTest() error {
-	return nil
-}
-
-func (s *Service) UpdateTest() error {
-	return nil
-}
-
-func (s *Service) DeleteTest() error {
-	return nil
-}
-
-func (s *Service) CreateUserResponse() error {
-	return nil
-}
-
-func (s *Service) ReadUserResponse() error {
-	return nil
-}
-
-func (s *Service) UpdateUserResponse() error {
-	return nil
-}
-
-func (s *Service) DeleteUserResponse() error {
 	return nil
 }
