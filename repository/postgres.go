@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"gin/config"
+	"gin/types"
 )
 
 type Postgres struct {
@@ -35,50 +37,18 @@ func NewPostgres() (*Postgres, error) {
 	return repo, nil
 }
 
-func (p *Postgres) CreateQuestion() error {
+func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question) error {
 	return nil
 }
 
-func (p *Postgres) ReadQuestion() error {
+func (p *Postgres) ReadQuestion(ctx context.Context, id *int) error {
 	return nil
 }
 
-func (p *Postgres) UpdateQuestion() error {
+func (p *Postgres) UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error {
 	return nil
 }
 
-func (p *Postgres) DeleteQuestion() error {
-	return nil
-}
-
-func (p *Postgres) CreateTest() error {
-	return nil
-}
-
-func (p *Postgres) ReadTest() error {
-	return nil
-}
-
-func (p *Postgres) UpdateTest() error {
-	return nil
-}
-
-func (p *Postgres) DeleteTest() error {
-	return nil
-}
-
-func (p *Postgres) CreateUserResponse() error {
-	return nil
-}
-
-func (p *Postgres) ReadUserResponse() error {
-	return nil
-}
-
-func (p *Postgres) UpdateUserResponse() error {
-	return nil
-}
-
-func (p Postgres) DeleteUserResponse() error {
+func (p *Postgres) DeleteQuestion(ctx context.Context, id *int) error {
 	return nil
 }
