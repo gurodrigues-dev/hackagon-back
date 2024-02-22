@@ -70,6 +70,10 @@ func (ct *controller) Start() {
 
 	api := router.Group("/api/v1")
 	api.GET("/ping", ct.Ping)
+	api.POST("/question")
+	api.GET("/question")
+	api.PUT("/question")
+	api.DELETE("/question")
 
 	router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -80,3 +84,19 @@ func (ct *controller) Ping(c *gin.Context) {
 		"message": "pong",
 	})
 }
+
+func (ct *controller) CreateQuestion() {
+
+}
+
+// func (ct *controller) ReadQuestion() {
+
+// }
+
+// func (ct *controller) UpdateQuestion() {
+
+// }
+
+// func (ct *controller) DeleteQuestion() {
+
+// }
