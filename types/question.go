@@ -1,15 +1,18 @@
 package types
 
+import "github.com/google/uuid"
+
 type Question struct {
-	Title       string
-	Description string
-	Date        string
-	Points      int
-	Language    string
+	ID          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Date        string    `json:"date"`
+	Level       string    `json:"level"`
 }
 
-type Response struct {
-	Response string
-	Output   string
-	Date     string
+type QuestionCreateRequest struct {
+	ID          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Level       string    `json:"level"`
 }
