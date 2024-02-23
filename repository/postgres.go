@@ -55,7 +55,7 @@ func (p *Postgres) DeleteQuestion(ctx context.Context, id *int) error {
 	return nil
 }
 
-func (p *Postgres) CreateUser(ctx context.Context) {
+func (p *Postgres) CreateUser(ctx context.Context, user *types.User) {
 
 }
 

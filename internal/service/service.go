@@ -48,7 +48,7 @@ func (s *Service) DeleteQuestion() error {
 	return nil
 }
 
-func (s *Service) CreateUser(ctx context.Context) {
+func (s *Service) CreateUser(ctx context.Context, user *types.User) {
 
 }
 
