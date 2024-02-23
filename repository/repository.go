@@ -12,4 +12,8 @@ type Repository interface {
 	ReadQuestion(ctx context.Context, id *int) error
 	UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error
 	DeleteQuestion(ctx context.Context, id *int) error
+	CreateUser(ctx context.Context, user *types.User)
+	ReadUser(ctx context.Context)
+	UpdateUser(ctx context.Context)
+	DeleteUser(ctx context.Context)
 }

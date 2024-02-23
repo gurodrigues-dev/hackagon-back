@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"gin/config"
 	"gin/internal/service"
+	"gin/types"
+	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -62,30 +64,43 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func (ct *controller) Start() {
-
-	config := config.Get()
-
-	router := gin.Default()
-
-	api := router.Group("/api/v1")
-	api.GET("/ping", ct.Ping)
-	api.POST("/question")
-	api.GET("/question")
-	api.PUT("/question")
-	api.DELETE("/question")
-
-	router.Run(fmt.Sprintf(":%d", config.Server.Port))
-
-}
-
 func (ct *controller) Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})
 }
 
-func (ct *controller) CreateQuestion() {
+func (ct *controller) CreateQuestion(c *gin.Context) {
+
+	var input types.QuestionCreateRequest
+
+	if err := c.BindJSON(&input); err != nil {
+		log.Printf("error parsing body content: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		return
+	}
+
+	if err := input.ValidateCreate(); err != nil {
+		log.Printf("invalid input: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	question := types.Question{
+		Title:       input.Title,
+		Description: input.Description,
+		Level:       input.Level,
+	}
+
+	err := ct.service.CreateQuestion(c, &question)
+
+	if err != nil {
+		log.Printf("error creating question: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, question)
 
 }
 
@@ -100,3 +115,20 @@ func (ct *controller) CreateQuestion() {
 // func (ct *controller) DeleteQuestion() {
 
 // }
+
+func (ct *controller) Start() {
+
+	config := config.Get()
+
+	router := gin.Default()
+
+	api := router.Group("/api/v1")
+	api.GET("/ping", ct.Ping)
+	api.POST("/question", ct.CreateQuestion)
+	api.GET("/question")
+	api.PUT("/question")
+	api.DELETE("/question")
+
+	router.Run(fmt.Sprintf(":%d", config.Server.Port))
+
+}
