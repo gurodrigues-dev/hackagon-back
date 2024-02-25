@@ -44,7 +44,7 @@ func (s *Service) UpdateQuestion() error {
 }
 
 func (s *Service) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
-	return nil
+	return s.repository.DeleteQuestion(ctx, id)
 }
 
 func (s *Service) CreateUser(ctx context.Context, user *types.User) {

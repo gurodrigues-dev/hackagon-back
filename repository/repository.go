@@ -13,6 +13,10 @@ type Repository interface {
 	ReadQuestion(ctx context.Context) (*types.Question, error)
 	UpdateQuestion(ctx context.Context, id uuid.UUID) error
 	DeleteQuestion(ctx context.Context, id uuid.UUID) error
+	CreateParam(ctx context.Context)
+	ReadParam(ctx context.Context)
+	UpdateParam(ctx context.Context)
+	DeleteParam(ctx context.Context)
 	CreateUser(ctx context.Context, user *types.User) error
 	ReadUser(ctx context.Context, id uuid.UUID) (*types.User, error)
 	UpdateUser(ctx context.Context, id uuid.UUID) error

@@ -107,7 +107,15 @@ func (ct *controller) deleteQuestion(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.DeleteQuestion(c, id)
+	err = ct.service.DeleteQuestion(c, id)
+
+	if err != nil {
+		log.Printf("error while deleting question: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "question deleted done successfully"})
 }
 
 func (ct *controller) createUser(c *gin.Context) {

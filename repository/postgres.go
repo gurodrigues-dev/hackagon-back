@@ -71,6 +71,27 @@ func (p *Postgres) UpdateQuestion(ctx context.Context, id uuid.UUID) error {
 }
 
 func (p *Postgres) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
+	tx, err := p.conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	_, err = tx.Exec("DELETE FROM questions WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

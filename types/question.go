@@ -19,3 +19,6 @@ type QuestionCreateRequest struct {
 	Level       string    `json:"level"`
 	Date        string    `json:"date"`
 }
+
+type Param struct {
+}
