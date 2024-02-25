@@ -10,6 +10,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type controller struct {
@@ -27,50 +28,19 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		var secretKey []byte
-
-		tokenString := c.GetHeader("Authorization")
-
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
-			c.Abort()
-			return
-		}
-
-		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-			return secretKey, nil
-		})
-
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
-			c.Abort()
-			return
-		}
-
-		claims, ok := token.Claims.(*Claims)
-		if !ok || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
-			c.Abort()
-			return
-		}
-
-		c.Set("nickname", claims.Nickname)
-		c.Set("isAuthenticated", true)
-		c.Next()
-
-	}
-}
-
 func (ct *controller) Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})
 }
 
-func (ct *controller) CreateQuestion(c *gin.Context) {
+func (ct *controller) Login(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"token": "xxxxxx"})
+
+}
+
+func (ct *controller) createQuestion(c *gin.Context) {
 
 	var input types.QuestionCreateRequest
 
@@ -105,7 +75,7 @@ func (ct *controller) CreateQuestion(c *gin.Context) {
 
 }
 
-func (ct *controller) GetQuestion(c *gin.Context) {
+func (ct *controller) getQuestion(c *gin.Context) {
 
 	question, err := ct.service.ReadQuestion(c)
 
@@ -119,11 +89,48 @@ func (ct *controller) GetQuestion(c *gin.Context) {
 
 }
 
-func (ct *controller) UpdateQuestion(c *gin.Context) {
+func (ct *controller) updateQuestion(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"message": "update done successfully"})
 
 }
 
-func (ct *controller) DeleteQuestion(c *gin.Context) {
+func (ct *controller) deleteQuestion(c *gin.Context) {
+
+	input := c.Param("id")
+
+	id, err := uuid.Parse(input)
+
+	if err != nil {
+		log.Printf("error parsing path ID: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	err := ct.service.DeleteQuestion(c, id)
+}
+
+func (ct *controller) createUser(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"message": "create done successfully"})
+
+}
+
+func (ct *controller) getUser(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"user": "not implemented"})
+
+}
+
+func (ct *controller) updateUser(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"message": "user update done successfully"})
+
+}
+
+func (ct *controller) deleteUser(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"message": "user delete done successfully"})
 
 }
 
@@ -133,12 +140,49 @@ func (ct *controller) Start() {
 
 	router := gin.Default()
 
+	authMiddleware := func(c *gin.Context) {
+
+		var secretKey []byte
+
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.Abort()
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+			return secretKey, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*Claims)
+		if !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		c.Set("nickname", claims.Nickname)
+		c.Set("isAuthenticated", true)
+		c.Next()
+	}
+
 	api := router.Group("/api/v1")
 	api.GET("/ping", ct.Ping)
-	api.POST("/question", ct.CreateQuestion)
-	api.GET("/question", ct.GetQuestion)
-	api.PUT("/question")
-	api.DELETE("/question")
+	api.POST("/question", ct.createQuestion)
+	api.GET("/question", ct.getQuestion)
+	api.PATCH("/question/:id", ct.updateQuestion)
+	api.DELETE("/question/:id", ct.deleteQuestion)
+	api.POST("/user", ct.createUser)
+	api.GET("/user/:id", authMiddleware, ct.getUser)
+	api.PATCH("/user/:id", authMiddleware, ct.updateUser)
+	api.DELETE("/user/:id", authMiddleware, ct.deleteUser)
 
 	router.Run(fmt.Sprintf(":%d", config.Server.Port))
 

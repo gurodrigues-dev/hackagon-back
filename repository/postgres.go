@@ -7,6 +7,9 @@ import (
 	"gin/config"
 	"gin/types"
 	"log"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Postgres struct {
@@ -49,7 +52,7 @@ func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
 
 	var question types.Question
 
-	err := p.conn.QueryRow(sql, "2024-02-24").Scan(
+	err := p.conn.QueryRow(sql, time.Now().Format("2006-01-02")).Scan(
 		&question.ID,
 		&question.Title,
 		&question.Description,
@@ -63,26 +66,28 @@ func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
 	return &question, nil
 }
 
-func (p *Postgres) UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error {
+func (p *Postgres) UpdateQuestion(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (p *Postgres) DeleteQuestion(ctx context.Context, id *int) error {
+func (p *Postgres) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (p *Postgres) CreateUser(ctx context.Context, user *types.User) {
+func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
+	return nil
+}
+
+func (p *Postgres) ReadUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
+
+	return nil, nil
 
 }
 
-func (p *Postgres) ReadUser(ctx context.Context) {
-
+func (p *Postgres) UpdateUser(ctx context.Context, id uuid.UUID) error {
+	return nil
 }
 
-func (p *Postgres) UpdateUser(ctx context.Context) {
-
-}
-
-func (p *Postgres) DeleteUser(ctx context.Context) {
-
+func (p *Postgres) DeleteUser(ctx context.Context, id uuid.UUID) error {
+	return nil
 }

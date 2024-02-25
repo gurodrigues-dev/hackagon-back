@@ -43,7 +43,7 @@ func (s *Service) UpdateQuestion() error {
 	return nil
 }
 
-func (s *Service) DeleteQuestion() error {
+func (s *Service) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
@@ -51,14 +51,14 @@ func (s *Service) CreateUser(ctx context.Context, user *types.User) {
 
 }
 
-func (s *Service) ReadUser(ctx context.Context) {
+func (s *Service) ReadUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
+	return s.repository.ReadUser(ctx, id)
+}
+
+func (s *Service) UpdateUser(ctx context.Context, id uuid.UUID) {
 
 }
 
-func (s *Service) UpdateUser(ctx context.Context) {
-
-}
-
-func (s *Service) DeleteUser(ctx context.Context) {
+func (s *Service) DeleteUser(ctx context.Context, id uuid.UUID) {
 
 }
