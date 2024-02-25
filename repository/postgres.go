@@ -96,19 +96,73 @@ func (p *Postgres) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
 }
 
 func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
+	sql := `INSERT INTO users (nickname, email, password) VALUES ($1, $2, $3)`
+	_, err := p.conn.Exec(sql, user.Nickname, user.Email, user.Password)
+	return err
+}
+
+func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
+	sql := `SELECT id, nickname, email FROM users WHERE id = $1 LIMIT 1`
+
+	var user types.User
+
+	err := p.conn.QueryRow(sql, id).Scan(
+		&user.ID,
+		&user.Nickname,
+		&user.Email,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &user, nil
+}
+
+func (p *Postgres) UpdateUser(ctx context.Context, id *int) error {
 	return nil
 }
 
-func (p *Postgres) ReadUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
+func (p *Postgres) DeleteUser(ctx context.Context, nickname *string) error {
+	tx, err := p.conn.Begin()
+	if err != nil {
+		return err
+	}
 
-	return nil, nil
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
 
-}
+	_, err = tx.Exec("DELETE FROM users WHERE nickname = $1", nickname)
+	if err != nil {
+		return err
+	}
 
-func (p *Postgres) UpdateUser(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (p *Postgres) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) error {
+	var password string
+
+	sql := `SELECT password FROM users WHERE nickname = $1`
+
+	err := p.conn.QueryRow(sql, user.Nickname).Scan(&password)
+	if err != nil {
+		return err
+	}
+
+	match := password == user.Password
+
+	if !match {
+		return fmt.Errorf("nickname or password wrong")
+	}
+
 	return nil
+
 }
