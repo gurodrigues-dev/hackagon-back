@@ -4,7 +4,6 @@ import (
 	"context"
 	"gin/repository"
 	"gin/types"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -27,17 +26,17 @@ func (s *Service) CreateQuestion(ctx context.Context, question *types.Question) 
 		return err
 	}
 
-	today := time.Now().Format("2006-01-02")
-
 	question.ID = id
-	question.Date = today
 
 	return s.repository.CreateQuestion(ctx, question)
 
 }
 
-func (s *Service) ReadQuestion(ctx context.Context, id *int) error {
-	return nil
+func (s *Service) ReadQuestion(ctx context.Context) (*types.Question, error) {
+
+	question, err := s.repository.ReadQuestion(ctx)
+
+	return question, err
 }
 
 func (s *Service) UpdateQuestion() error {

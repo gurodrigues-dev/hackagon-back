@@ -1,6 +1,8 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Question struct {
 	ID          uuid.UUID `json:"id"`
@@ -15,4 +17,5 @@ type QuestionCreateRequest struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Level       string    `json:"level"`
+	Date        string    `json:"date"`
 }

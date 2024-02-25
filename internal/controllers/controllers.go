@@ -90,6 +90,7 @@ func (ct *controller) CreateQuestion(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 		Level:       input.Level,
+		Date:        input.Date,
 	}
 
 	err := ct.service.CreateQuestion(c, &question)
@@ -104,17 +105,27 @@ func (ct *controller) CreateQuestion(c *gin.Context) {
 
 }
 
-// func (ct *controller) ReadQuestion() {
+func (ct *controller) GetQuestion(c *gin.Context) {
 
-// }
+	question, err := ct.service.ReadQuestion(c)
 
-// func (ct *controller) UpdateQuestion() {
+	if err != nil {
+		log.Printf("error searching question %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
 
-// }
+	c.JSON(http.StatusOK, question)
 
-// func (ct *controller) DeleteQuestion() {
+}
 
-// }
+func (ct *controller) UpdateQuestion(c *gin.Context) {
+
+}
+
+func (ct *controller) DeleteQuestion(c *gin.Context) {
+
+}
 
 func (ct *controller) Start() {
 
@@ -125,7 +136,7 @@ func (ct *controller) Start() {
 	api := router.Group("/api/v1")
 	api.GET("/ping", ct.Ping)
 	api.POST("/question", ct.CreateQuestion)
-	api.GET("/question")
+	api.GET("/question", ct.GetQuestion)
 	api.PUT("/question")
 	api.DELETE("/question")
 

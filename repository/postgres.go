@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gin/config"
 	"gin/types"
+	"log"
 )
 
 type Postgres struct {
@@ -43,8 +44,23 @@ func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question)
 	return err
 }
 
-func (p *Postgres) ReadQuestion(ctx context.Context, id *int) error {
-	return nil
+func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
+	sql := `SELECT id, title, description, date, level FROM questions WHERE date = $1 LIMIT 1`
+
+	var question types.Question
+
+	err := p.conn.QueryRow(sql, "2024-02-24").Scan(
+		&question.ID,
+		&question.Title,
+		&question.Description,
+		&question.Date,
+		&question.Level,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &question, nil
 }
 
 func (p *Postgres) UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error {

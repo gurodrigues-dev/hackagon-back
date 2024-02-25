@@ -9,7 +9,7 @@ import (
 
 type Repository interface {
 	CreateQuestion(ctx context.Context, question *types.Question) error
-	ReadQuestion(ctx context.Context, id *int) error
+	ReadQuestion(ctx context.Context) (*types.Question, error)
 	UpdateQuestion(ctx context.Context, id *int, dataToChange *types.Question) error
 	DeleteQuestion(ctx context.Context, id *int) error
 	CreateUser(ctx context.Context, user *types.User)
