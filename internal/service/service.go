@@ -132,3 +132,11 @@ func (s *Service) VerifyAnswer(ctx context.Context, question *types.Question, ni
 	answerResponse, err := s.repository.VerifyAnswer(ctx, question, nickname)
 	return answerResponse, err
 }
+
+func (s *Service) IncreaseScore(ctx context.Context, nickname *string, points *int) error {
+	return s.repository.IncreaseScore(ctx, nickname, points)
+}
+
+func (s *Service) GetRank(ctx context.Context, nickname *string) ([]types.Rank, error) {
+	return s.repository.GetRank(ctx, nickname)
+}
