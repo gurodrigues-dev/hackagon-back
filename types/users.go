@@ -20,6 +20,13 @@ type Answer struct {
 	QuestionID uuid.UUID `json:"questionid"`
 	Status     string    `json:"status"`
 	CreatedAt  string    `json:"time"`
+	Points     int       `json:"points"`
+}
+
+type Rank struct {
+	Nickname string `json:"nickname"`
+	Points   int    `json:"points"`
+	Position int    `json:"position"`
 }
 
 func (u *User) HashPassword() string {
