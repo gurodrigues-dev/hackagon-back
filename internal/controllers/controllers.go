@@ -288,6 +288,8 @@ func (ct *controller) CreateAnswer(c *gin.Context) {
 		return
 	}
 
+	err = ct.service.IncreaseScore(c, &input.Nickname, &input.Points)
+
 	c.JSON(http.StatusOK, gin.H{"message": "answer created"})
 
 }
@@ -311,6 +313,32 @@ func (ct *controller) DeleteAnswer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "answer deleted!"})
+
+}
+
+func (ct *controller) GetRank(c *gin.Context) {
+
+	err := ct.service.ParserJwt(c)
+
+	if err != nil {
+		log.Printf("error to parser jwt: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	nicknameInterface, _ := c.Get("nickname")
+
+	nickname := fmt.Sprint(nicknameInterface)
+
+	rank, err := ct.service.GetRank(c, &nickname)
+
+	if err != nil {
+		log.Printf("error while mount rank: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, rank)
 
 }
 
@@ -366,6 +394,7 @@ func (ct *controller) Start() {
 	api.DELETE("/user", authMiddleware, ct.deleteUser)
 	api.POST("/answer", authMiddleware, ct.CreateAnswer)
 	api.DELETE("/answer/:id", authMiddleware, ct.DeleteAnswer)
+	api.GET("/rank", authMiddleware, ct.GetRank)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 
