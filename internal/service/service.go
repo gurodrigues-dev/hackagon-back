@@ -108,3 +108,27 @@ func (s *Service) ParserJwt(ctx *gin.Context) error {
 	return nil
 
 }
+
+func (s *Service) CreateAnswer(ctx context.Context, answer *types.Answer) error {
+
+	id, err := uuid.NewV7()
+
+	if err != nil {
+		return err
+	}
+
+	answer.ID = id
+
+	answer.CreatedAt = time.Now().Format("02-01-2006-15-04-05")
+
+	return s.repository.CreateAnswer(ctx, answer)
+}
+
+func (s *Service) DeleteAnswer(ctx context.Context, id uuid.UUID) error {
+	return s.repository.DeleteAnswer(ctx, id)
+}
+
+func (s *Service) VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error) {
+	answerResponse, err := s.repository.VerifyAnswer(ctx, question, nickname)
+	return answerResponse, err
+}
