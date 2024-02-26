@@ -3,6 +3,8 @@ package types
 import (
 	"crypto/sha256"
 	"encoding/hex"
+
+	"github.com/google/uuid"
 )
 
 type User struct {
@@ -10,6 +12,14 @@ type User struct {
 	Nickname string `json:"nickname"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type Answer struct {
+	ID         uuid.UUID `json:"id"`
+	Nickname   string    `json:"nickname"`
+	QuestionID uuid.UUID `json:"questionid"`
+	Status     string    `json:"status"`
+	CreatedAt  string    `json:"time"`
 }
 
 func (u *User) HashPassword() string {
