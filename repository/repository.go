@@ -21,6 +21,6 @@ type Repository interface {
 	CreateAnswer(ctx context.Context, answer *types.Answer) error
 	DeleteAnswer(ctx context.Context, id uuid.UUID) error
 	VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error)
-	// GetRank(ctx context.Context, nickname *string) error
-	// IncreaseScore(ctx context.Context, nickname *string) error
+	IncreaseScore(ctx context.Context, nickname *string, points *int) error
+	GetRank(ctx context.Context, nickname *string) ([]types.Rank, error)
 }
