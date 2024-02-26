@@ -187,3 +187,58 @@ func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) error {
 	return nil
 
 }
+
+func (p *Postgres) CreateAnswer(ctx context.Context, answer *types.Answer) error {
+	sql := `INSERT INTO answers (id, nickname, questionid, status, created_at) VALUES ($1, $2, $3, $4, $5)`
+	_, err := p.conn.Exec(sql, answer.ID, answer.Nickname, answer.QuestionID, answer.Status, answer.CreatedAt)
+	return err
+}
+
+func (p *Postgres) DeleteAnswer(ctx context.Context, id uuid.UUID) error {
+	tx, err := p.conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	_, err = tx.Exec("DELETE FROM answers WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Postgres) VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error) {
+	sqlQuery := `SELECT nickname, status, created_at FROM answers WHERE questionid = $1 AND nickname = $2 ORDER BY created_at DESC LIMIT 1`
+
+	var answerResponse types.Answer
+
+	err := p.conn.QueryRow(sqlQuery, question.ID, nickname).Scan(
+		&answerResponse.Nickname,
+		&answerResponse.Status,
+		&answerResponse.CreatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return &answerResponse, nil
+		}
+
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return &answerResponse, nil
+
+}
