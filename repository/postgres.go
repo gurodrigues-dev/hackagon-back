@@ -242,3 +242,40 @@ func (p *Postgres) VerifyAnswer(ctx context.Context, question *types.Question, n
 	return &answerResponse, nil
 
 }
+
+func (p *Postgres) IncreaseScore(ctx context.Context, nickname *string, points *int) error {
+	sql := `UPDATE users SET points = points + $1 WHERE nickname = $2`
+
+	_, err := p.conn.Exec(sql, points, nickname)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank, error) {
+	sql := `SELECT nickname, points, RANK() OVER (ORDER BY points DESC) AS rank FROM users`
+
+	rows, err := p.conn.Query(sql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var ranks []types.Rank
+
+	for rows.Next() {
+		var rank types.Rank
+		err := rows.Scan(&rank.Nickname, &rank.Points, &rank.Position)
+		if err != nil {
+			return nil, err
+		}
+		ranks = append(ranks, rank)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ranks, nil
+}
