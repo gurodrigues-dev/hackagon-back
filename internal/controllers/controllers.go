@@ -81,12 +81,7 @@ func (ct *controller) createQuestion(c *gin.Context) {
 		return
 	}
 
-	question := types.Question{
-		Title:       input.Title,
-		Description: input.Description,
-		Level:       input.Level,
-		Date:        input.Date,
-	}
+	question := input.ToQuestion()
 
 	err := ct.service.CreateQuestion(c, &question)
 

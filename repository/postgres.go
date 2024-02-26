@@ -7,6 +7,7 @@ import (
 	"gin/config"
 	"gin/types"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -42,15 +43,25 @@ func NewPostgres() (*Postgres, error) {
 }
 
 func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question) error {
-	sql := `INSERT INTO questions (id, title, description, date, level) VALUES ($1, $2, $3, $4, $5)`
-	_, err := p.conn.Exec(sql, question.ID, question.Title, question.Description, question.Date, question.Level)
+
+	params1 := strings.Join(question.Inputs.Test1.Params, ",")
+	params2 := strings.Join(question.Inputs.Test2.Params, ",")
+	params3 := strings.Join(question.Inputs.Test3.Params, ",")
+
+	sql := `INSERT INTO questions (id, title, description, date, level, params1, response1, params2, response2, params3, response3) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+	_, err := p.conn.Exec(sql, question.ID, question.Title, question.Description, question.Date, question.Level, params1, question.Inputs.Test1.Response, params2, question.Inputs.Test2.Response, params3, question.Inputs.Test3.Response)
 	return err
 }
 
 func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
-	sql := `SELECT id, title, description, date, level FROM questions WHERE date = $1 LIMIT 1`
+	sql := `SELECT id, title, description, date, level, params1, response1, params2, response2, params3, response3 FROM questions WHERE date = $1 LIMIT 1`
 
-	var question types.Question
+	var (
+		question   types.Question
+		params1Str string
+		params2Str string
+		params3Str string
+	)
 
 	err := p.conn.QueryRow(sql, time.Now().Format("2006-01-02")).Scan(
 		&question.ID,
@@ -58,10 +69,20 @@ func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
 		&question.Description,
 		&question.Date,
 		&question.Level,
+		&params1Str,
+		&question.Inputs.Test1.Response,
+		&params2Str,
+		&question.Inputs.Test2.Response,
+		&params3Str,
+		&question.Inputs.Test3.Response,
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	question.Inputs.Test1.Params = strings.Split(params1Str, ",")
+	question.Inputs.Test2.Params = strings.Split(params2Str, ",")
+	question.Inputs.Test3.Params = strings.Split(params3Str, ",")
 
 	return &question, nil
 }
