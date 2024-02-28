@@ -13,7 +13,7 @@ jobs:
       contents: read
 
     env:
-      IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon
+      IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
 
     steps:
       - name: Checkout code
