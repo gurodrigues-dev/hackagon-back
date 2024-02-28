@@ -39,6 +39,3 @@ services:
 networks:
   hackagon_network:
     driver: bridge
-
-volumes:
-  grafana-storage:
