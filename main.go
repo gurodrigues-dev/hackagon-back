@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+
 	config, err := config.Load("config/config.yaml")
 	if err != nil {
 		log.Fatalf("error loading config: %s", err.Error())

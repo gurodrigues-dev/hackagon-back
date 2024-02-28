@@ -290,6 +290,12 @@ func (ct *controller) CreateAnswer(c *gin.Context) {
 
 	err = ct.service.IncreaseScore(c, &input.Nickname, &input.Points)
 
+	if err != nil {
+		log.Printf("error while increasing score: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "answer created"})
 
 }
