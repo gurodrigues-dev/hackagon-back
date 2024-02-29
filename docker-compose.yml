@@ -15,8 +15,9 @@ services:
       - hackagon_network   
 
   backend:
-      build: ./
+      image: ghcr.io/gurodrigues-dev/hackagon-back:v1.0.0
       container_name: hackagon_backend
+      hostname: hackagon
       restart: always
       deploy:
         resources:
