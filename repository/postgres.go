@@ -48,13 +48,13 @@ func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question)
 	params2 := strings.Join(question.Inputs.Test2.Params, ",")
 	params3 := strings.Join(question.Inputs.Test3.Params, ",")
 
-	sql := `INSERT INTO questions (id, title, description, date, level, params1, response1, params2, response2, params3, response3) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
-	_, err := p.conn.Exec(sql, question.ID, question.Title, question.Description, question.Date, question.Level, params1, question.Inputs.Test1.Response, params2, question.Inputs.Test2.Response, params3, question.Inputs.Test3.Response)
+	sqlQuery := `INSERT INTO questions (id, title, description, date, level, params1, response1, params2, response2, params3, response3) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+	_, err := p.conn.Exec(sqlQuery, question.ID, question.Title, question.Description, question.Date, question.Level, params1, question.Inputs.Test1.Response, params2, question.Inputs.Test2.Response, params3, question.Inputs.Test3.Response)
 	return err
 }
 
 func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
-	sql := `SELECT id, title, description, date, level, params1, response1, params2, response2, params3, response3 FROM questions WHERE date = $1 LIMIT 1`
+	sqlQuery := `SELECT id, title, description, date, level, params1, response1, params2, response2, params3, response3 FROM questions WHERE date = $1 LIMIT 1`
 
 	var (
 		question   types.Question
@@ -63,7 +63,7 @@ func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
 		params3Str string
 	)
 
-	err := p.conn.QueryRow(sql, time.Now().Format("2006-01-02")).Scan(
+	err := p.conn.QueryRow(sqlQuery, time.Now().Format("2006-01-02")).Scan(
 		&question.ID,
 		&question.Title,
 		&question.Description,
@@ -77,7 +77,10 @@ func (p *Postgres) ReadQuestion(ctx context.Context) (*types.Question, error) {
 		&question.Inputs.Test3.Response,
 	)
 	if err != nil {
-		log.Fatal(err)
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
 	}
 
 	question.Inputs.Test1.Params = strings.Split(params1Str, ",")
@@ -117,23 +120,26 @@ func (p *Postgres) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
 }
 
 func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
-	sql := `INSERT INTO users (nickname, email, password) VALUES ($1, $2, $3)`
-	_, err := p.conn.Exec(sql, user.Nickname, user.Email, user.Password)
+	sqlQuery := `INSERT INTO users (nickname, email, password) VALUES ($1, $2, $3)`
+	_, err := p.conn.Exec(sqlQuery, user.Nickname, user.Email, user.Password)
 	return err
 }
 
 func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
-	sql := `SELECT id, nickname, email FROM users WHERE id = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nickname, email FROM users WHERE id = $1 LIMIT 1`
 
 	var user types.User
 
-	err := p.conn.QueryRow(sql, id).Scan(
+	err := p.conn.QueryRow(sqlQuery, id).Scan(
 		&user.ID,
 		&user.Nickname,
 		&user.Email,
 	)
 	if err != nil {
-		log.Fatal(err)
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
 	}
 
 	return &user, nil
@@ -189,8 +195,8 @@ func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) error {
 }
 
 func (p *Postgres) CreateAnswer(ctx context.Context, answer *types.Answer) error {
-	sql := `INSERT INTO answers (id, nickname, questionid, status, created_at) VALUES ($1, $2, $3, $4, $5)`
-	_, err := p.conn.Exec(sql, answer.ID, answer.Nickname, answer.QuestionID, answer.Status, answer.CreatedAt)
+	sqlQuery := `INSERT INTO answers (id, nickname, questionid, status, created_at) VALUES ($1, $2, $3, $4, $5)`
+	_, err := p.conn.Exec(sqlQuery, answer.ID, answer.Nickname, answer.QuestionID, answer.Status, answer.CreatedAt)
 	return err
 }
 
@@ -244,9 +250,9 @@ func (p *Postgres) VerifyAnswer(ctx context.Context, question *types.Question, n
 }
 
 func (p *Postgres) IncreaseScore(ctx context.Context, nickname *string, points *int) error {
-	sql := `UPDATE users SET points = points + $1 WHERE nickname = $2`
+	sqlQuery := `UPDATE users SET points = points + $1 WHERE nickname = $2`
 
-	_, err := p.conn.Exec(sql, points, nickname)
+	_, err := p.conn.Exec(sqlQuery, points, nickname)
 	if err != nil {
 		return err
 	}
@@ -255,9 +261,9 @@ func (p *Postgres) IncreaseScore(ctx context.Context, nickname *string, points *
 }
 
 func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank, error) {
-	sql := `SELECT nickname, points, RANK() OVER (ORDER BY points DESC) AS rank FROM users`
+	sqlQuery := `SELECT nickname, points, RANK() OVER (ORDER BY points DESC) AS rank FROM users`
 
-	rows, err := p.conn.Query(sql)
+	rows, err := p.conn.Query(sqlQuery)
 	if err != nil {
 		log.Fatal(err)
 	}
