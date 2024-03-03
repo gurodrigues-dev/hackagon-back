@@ -24,3 +24,7 @@ type Repository interface {
 	IncreaseScore(ctx context.Context, nickname *string, points *int) error
 	GetRank(ctx context.Context, nickname *string) ([]types.Rank, error)
 }
+
+type Cloud interface {
+	SendEmail(ctx context.Context, email *string) error
+}

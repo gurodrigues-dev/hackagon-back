@@ -140,3 +140,8 @@ func (s *Service) IncreaseScore(ctx context.Context, nickname *string, points *i
 func (s *Service) GetRank(ctx context.Context, nickname *string) ([]types.Rank, error) {
 	return s.repository.GetRank(ctx, nickname)
 }
+
+func (s *Service) SendEmail(ctx context.Context, email *string) error {
+
+	return nil
+}
