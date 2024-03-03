@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"gin/config"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -31,4 +32,8 @@ func NewAwsConnection() (*AWS, error) {
 
 	return repo, nil
 
+}
+
+func (a *AWS) SendEmail(ctx context.Context, email *string) error {
+	return nil
 }

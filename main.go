@@ -20,7 +20,12 @@ func main() {
 		log.Fatalf("error creating repository: %s", err.Error())
 	}
 
-	service := service.New(repo)
+	aws, err := repository.NewAwsConnection()
+	if err != nil {
+		log.Fatalf("error creating repository: %s", err.Error())
+	}
+
+	service := service.New(repo, aws)
 
 	controller := controllers.New(service)
 

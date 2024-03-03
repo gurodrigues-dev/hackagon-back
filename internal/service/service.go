@@ -15,11 +15,13 @@ import (
 
 type Service struct {
 	repository repository.Repository
+	cloud      repository.Cloud
 }
 
-func New(repo repository.Repository) *Service {
+func New(repo repository.Repository, cloud repository.Cloud) *Service {
 	return &Service{
 		repository: repo,
+		cloud:      cloud,
 	}
 }
 
