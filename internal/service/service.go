@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"gin/config"
 	"gin/repository"
 	"gin/types"
+	"math/big"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -16,12 +18,14 @@ import (
 type Service struct {
 	repository repository.Repository
 	cloud      repository.Cloud
+	cache      repository.Cache
 }
 
-func New(repo repository.Repository, cloud repository.Cloud) *Service {
+func New(repo repository.Repository, cloud repository.Cloud, cache repository.Cache) *Service {
 	return &Service{
 		repository: repo,
 		cloud:      cloud,
+		cache:      cache,
 	}
 }
 
@@ -143,7 +147,31 @@ func (s *Service) GetRank(ctx context.Context, nickname *string) ([]types.Rank, 
 	return s.repository.GetRank(ctx, nickname)
 }
 
-func (s *Service) SendEmail(ctx context.Context, email *string) error {
+func (s *Service) VerifyEmail(ctx context.Context, email *string) error {
 
 	return nil
+}
+
+func (s *Service) SendEmail(ctx context.Context, email *types.Email) error {
+	return nil
+}
+
+func (s *Service) GenerateRandomToken() (string, error) {
+
+	tokenLength := 6
+
+	allowedChars := "0123456789"
+
+	tokenBytes := make([]byte, tokenLength)
+	for i := 0; i < tokenLength; i++ {
+		randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(allowedChars))))
+		if err != nil {
+			return "", err
+		}
+		tokenBytes[i] = allowedChars[randomIndex.Int64()]
+	}
+
+	token := string(tokenBytes)
+
+	return token, nil
 }
