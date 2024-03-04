@@ -11,6 +11,7 @@ type Config struct {
 	Database Database
 	Server   Server
 	Aws      Aws
+	Cache    Cache
 }
 
 type Server struct {
@@ -33,6 +34,11 @@ type Aws struct {
 	SecretKey string `yaml:"secretkey"`
 	Token     string `yaml:"token"`
 	Source    string `yaml:"source"`
+}
+
+type Cache struct {
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
 }
 
 var config *Config
