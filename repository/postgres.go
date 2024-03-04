@@ -285,3 +285,7 @@ func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank,
 
 	return ranks, nil
 }
+
+func (p *Postgres) NewPassword(ctx context.Context, password *string) error {
+	return nil
+}
