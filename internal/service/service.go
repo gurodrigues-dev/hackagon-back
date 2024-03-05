@@ -179,6 +179,6 @@ func (s *Service) VerifyEmailExists(ctx context.Context, email *string) (bool, e
 	return s.repository.VerifyEmailExists(ctx, email)
 }
 
-func (s *Service) SaveRedis(ctx context.Context, key, value *string) error {
+func (s *Service) SaveRedis(ctx context.Context, key, value string) error {
 	return s.cache.SaveRedis(ctx, key, value)
 }

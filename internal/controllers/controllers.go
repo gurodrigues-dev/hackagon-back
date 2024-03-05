@@ -404,7 +404,7 @@ func (ct *controller) sendEmailToRecovery(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.SaveRedis(c, &token, &input.Email)
+	err = ct.service.SaveRedis(c, token, input.Email)
 
 	if err != nil {
 		log.Printf("error while saving token: %s", err.Error())
@@ -470,6 +470,7 @@ func (ct *controller) Start() {
 	api.DELETE("/answer/:id", authMiddleware, ct.DeleteAnswer)
 	api.GET("/rank", authMiddleware, ct.GetRank)
 	api.POST("/password", ct.sendEmailToRecovery)
+	api.GET("/password/:token")
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 
