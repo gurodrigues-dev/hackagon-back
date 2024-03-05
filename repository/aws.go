@@ -76,7 +76,7 @@ func (a *AWS) SendEmail(ctx context.Context, email *types.Email) error {
 
 	emailInput := &ses.SendEmailInput{
 		Destination: &ses.Destination{
-			ToAddresses: []*string{aws.String(email.Recipient)},
+			ToAddresses: []*string{aws.String(*email.Recipient)},
 		},
 		Message: &ses.Message{
 			Body: &ses.Body{
