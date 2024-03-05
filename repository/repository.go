@@ -23,4 +23,15 @@ type Repository interface {
 	VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error)
 	IncreaseScore(ctx context.Context, nickname *string, points *int) error
 	GetRank(ctx context.Context, nickname *string) ([]types.Rank, error)
+	NewPassword(ctx context.Context, password *string) error
+}
+
+type Cloud interface {
+	VerifyEmail(ctx context.Context, email *string) error
+	SendEmail(ctx context.Context, email *types.Email) error
+}
+
+type Cache interface {
+	SaveToken(ctx context.Context, token *string) error
+	VerifyToken(ctx context.Context, token *string) error
 }
