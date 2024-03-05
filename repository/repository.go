@@ -27,6 +27,7 @@ type Repository interface {
 }
 
 type Cloud interface {
+	VerifyEmail(ctx context.Context, email *string) error
 	SendEmail(ctx context.Context, email *types.Email) error
 }
 

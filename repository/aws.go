@@ -38,13 +38,27 @@ func NewAwsConnection() (*AWS, error) {
 
 func (a *AWS) VerifyEmail(ctx context.Context, email *string) error {
 
-	svc := ses.New(a.conn)
+	conf := config.Get()
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(conf.Aws.Region),
+		Credentials: credentials.NewStaticCredentials(
+			conf.Aws.AccessKey,
+			conf.Aws.SecretKey,
+			conf.Aws.Token),
+	})
+
+	if err != nil {
+		return nil
+	}
+
+	svc := ses.New(sess)
 
 	emailVerified := &ses.VerifyEmailIdentityInput{
 		EmailAddress: aws.String(*email),
 	}
 
-	_, err := svc.VerifyEmailIdentity(emailVerified)
+	_, err = svc.VerifyEmailIdentity(emailVerified)
 
 	if err != nil {
 		return err

@@ -148,12 +148,11 @@ func (s *Service) GetRank(ctx context.Context, nickname *string) ([]types.Rank, 
 }
 
 func (s *Service) VerifyEmail(ctx context.Context, email *string) error {
-
-	return nil
+	return s.cloud.VerifyEmail(ctx, email)
 }
 
 func (s *Service) SendEmail(ctx context.Context, email *types.Email) error {
-	return nil
+	return s.cloud.SendEmail(ctx, email)
 }
 
 func (s *Service) GenerateRandomToken() (string, error) {

@@ -182,7 +182,15 @@ func (ct *controller) createUser(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.CreateUser(c, &input)
+	err := ct.service.VerifyEmail(c, &input.Email)
+
+	if err != nil {
+		log.Printf("error while sending email: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	err = ct.service.CreateUser(c, &input)
 
 	if err != nil {
 		log.Printf("error creating question: %s", err.Error())
