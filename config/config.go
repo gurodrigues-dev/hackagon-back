@@ -10,6 +10,8 @@ type Config struct {
 	Name     string `yaml:"name"`
 	Database Database
 	Server   Server
+	Aws      Aws
+	Cache    Cache
 }
 
 type Server struct {
@@ -24,6 +26,19 @@ type Database struct {
 	Host     string `yaml:"dbhost"`
 	Password string `yaml:"dbpassword"`
 	Name     string `yaml:"dbname"`
+}
+
+type Aws struct {
+	Region    string `yaml:"region"`
+	AccessKey string `yaml:"accesskey"`
+	SecretKey string `yaml:"secretkey"`
+	Token     string `yaml:"token"`
+	Source    string `yaml:"source"`
+}
+
+type Cache struct {
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
 }
 
 var config *Config

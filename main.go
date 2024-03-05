@@ -20,7 +20,17 @@ func main() {
 		log.Fatalf("error creating repository: %s", err.Error())
 	}
 
-	service := service.New(repo)
+	aws, err := repository.NewAwsConnection()
+	if err != nil {
+		log.Fatalf("error creating aws connection: %s", err.Error())
+	}
+
+	redis, err := repository.NewRedisClient()
+	if err != nil {
+		log.Fatalf("error creating redis connection: %s", err.Error())
+	}
+
+	service := service.New(repo, aws, redis)
 
 	controller := controllers.New(service)
 
