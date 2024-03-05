@@ -10,7 +10,7 @@ type Config struct {
 	Name     string `yaml:"name"`
 	Database Database
 	Server   Server
-	Aws      Aws
+	Cloud    Cloud
 	Cache    Cache
 }
 
@@ -28,7 +28,7 @@ type Database struct {
 	Name     string `yaml:"dbname"`
 }
 
-type Aws struct {
+type Cloud struct {
 	Region    string `yaml:"region"`
 	AccessKey string `yaml:"accesskey"`
 	SecretKey string `yaml:"secretkey"`

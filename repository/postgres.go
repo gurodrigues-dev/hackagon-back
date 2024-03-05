@@ -289,3 +289,20 @@ func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank,
 func (p *Postgres) NewPassword(ctx context.Context, password *string) error {
 	return nil
 }
+
+func (p *Postgres) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {
+	sqlQuery := `SELECT email FROM users WHERE email = $1`
+
+	var emailDatabase string
+
+	err := p.conn.QueryRow(sqlQuery, email).Scan(&emailDatabase)
+
+	fmt.Println(err)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
+}
