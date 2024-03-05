@@ -416,6 +416,25 @@ func (ct *controller) sendEmailToRecovery(c *gin.Context) {
 
 }
 
+func (ct *controller) verifyToken(c *gin.Context) {
+
+	var input types.User
+
+	input.Email = c.GetHeader("email")
+	token := c.Param("token")
+
+	err := ct.service.VerifyTokenRedis(c, token, input.Email)
+
+	if err != nil {
+		log.Printf("error while verifying token: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "token success verified"})
+
+}
+
 func (ct *controller) Start() {
 
 	conf := config.Get()
@@ -470,7 +489,8 @@ func (ct *controller) Start() {
 	api.DELETE("/answer/:id", authMiddleware, ct.DeleteAnswer)
 	api.GET("/rank", authMiddleware, ct.GetRank)
 	api.POST("/password", ct.sendEmailToRecovery)
-	api.GET("/password/:token")
+	api.GET("/password/:token", ct.verifyToken)
+	api.PATCH("/password/:email")
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 

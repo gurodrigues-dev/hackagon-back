@@ -182,3 +182,7 @@ func (s *Service) VerifyEmailExists(ctx context.Context, email *string) (bool, e
 func (s *Service) SaveRedis(ctx context.Context, key, value string) error {
 	return s.cache.SaveRedis(ctx, key, value)
 }
+
+func (s *Service) VerifyTokenRedis(ctx context.Context, token, email string) error {
+	return s.cache.VerifyToken(ctx, token, email)
+}
