@@ -36,7 +36,7 @@ func NewAwsConnection() (*AWS, error) {
 
 }
 
-func (a *AWS) VerifyEmail(ctx context.Context, email *string) error {
+func (a *AWS) CheckEmail(ctx context.Context, email *string) error {
 
 	conf := config.Get()
 
