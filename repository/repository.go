@@ -33,6 +33,6 @@ type Cloud interface {
 }
 
 type Cache interface {
-	SaveToken(ctx context.Context, token *string) error
+	SaveRedis(ctx context.Context, key, value *string) error
 	VerifyToken(ctx context.Context, token *string) error
 }
