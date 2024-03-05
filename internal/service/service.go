@@ -151,7 +151,7 @@ func (s *Service) CheckEmail(ctx context.Context, email *string) error {
 	return s.cloud.CheckEmail(ctx, email)
 }
 
-func (s *Service) SendEmail(ctx context.Context, email *types.Email) error {
+func (s *Service) SendEmailToRecovery(ctx context.Context, email *types.Email) error {
 	return s.cloud.SendEmail(ctx, email)
 }
 
@@ -177,4 +177,8 @@ func (s *Service) GenerateRandomToken() (string, error) {
 
 func (s *Service) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {
 	return s.repository.VerifyEmailExists(ctx, email)
+}
+
+func (s *Service) SaveRedis(ctx context.Context, key, value *string) error {
+	return s.cache.SaveRedis(ctx, key, value)
 }
