@@ -182,7 +182,17 @@ func (ct *controller) createUser(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.VerifyEmail(c, &input.Email)
+	exists, _ := ct.service.VerifyEmailExists(c, &input.Email)
+
+	fmt.Println(exists, input.Email)
+
+	if exists {
+		log.Println("email already exists!")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	err := ct.service.CheckEmail(c, &input.Email)
 
 	if err != nil {
 		log.Printf("error while sending email: %s", err.Error())
