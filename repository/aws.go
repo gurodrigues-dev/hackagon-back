@@ -20,8 +20,8 @@ func NewAwsConnection() (*AWS, error) {
 	conf := config.Get()
 
 	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String(conf.Aws.Region),
-		Credentials: credentials.NewStaticCredentials(conf.Aws.AccessKey, conf.Aws.SecretKey, conf.Aws.Token),
+		Region:      aws.String(conf.Cloud.Region),
+		Credentials: credentials.NewStaticCredentials(conf.Cloud.AccessKey, conf.Cloud.SecretKey, conf.Cloud.Token),
 	})
 
 	if err != nil {
@@ -36,16 +36,16 @@ func NewAwsConnection() (*AWS, error) {
 
 }
 
-func (a *AWS) VerifyEmail(ctx context.Context, email *string) error {
+func (a *AWS) CheckEmail(ctx context.Context, email *string) error {
 
 	conf := config.Get()
 
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(conf.Aws.Region),
+		Region: aws.String(conf.Cloud.Region),
 		Credentials: credentials.NewStaticCredentials(
-			conf.Aws.AccessKey,
-			conf.Aws.SecretKey,
-			conf.Aws.Token),
+			conf.Cloud.AccessKey,
+			conf.Cloud.SecretKey,
+			conf.Cloud.Token),
 	})
 
 	if err != nil {
@@ -76,7 +76,7 @@ func (a *AWS) SendEmail(ctx context.Context, email *types.Email) error {
 
 	emailInput := &ses.SendEmailInput{
 		Destination: &ses.Destination{
-			ToAddresses: []*string{aws.String(email.Recipient)},
+			ToAddresses: []*string{aws.String(*email.Recipient)},
 		},
 		Message: &ses.Message{
 			Body: &ses.Body{
@@ -88,7 +88,7 @@ func (a *AWS) SendEmail(ctx context.Context, email *types.Email) error {
 				Data: aws.String(email.Subject),
 			},
 		},
-		Source: aws.String(conf.Aws.Source),
+		Source: aws.String(conf.Cloud.Source),
 	}
 
 	_, err := svc.SendEmail(emailInput)

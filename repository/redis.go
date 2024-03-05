@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"gin/config"
+	"time"
 
 	"github.com/go-redis/redis"
 )
@@ -29,8 +30,16 @@ func NewRedisClient() (*Redis, error) {
 
 }
 
-func (r *Redis) SaveToken(ctx context.Context, token *string) error {
+func (r *Redis) SaveRedis(ctx context.Context, key, value *string) error {
+
+	err := r.conn.Set(*key, value, 10*time.Minute).Err()
+
+	if err != nil {
+		return err
+	}
+
 	return nil
+
 }
 
 func (r *Redis) VerifyToken(ctx context.Context, token *string) error {

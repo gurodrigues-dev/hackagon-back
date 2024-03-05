@@ -24,14 +24,15 @@ type Repository interface {
 	IncreaseScore(ctx context.Context, nickname *string, points *int) error
 	GetRank(ctx context.Context, nickname *string) ([]types.Rank, error)
 	NewPassword(ctx context.Context, password *string) error
+	VerifyEmailExists(ctx context.Context, email *string) (bool, error)
 }
 
 type Cloud interface {
-	VerifyEmail(ctx context.Context, email *string) error
+	CheckEmail(ctx context.Context, email *string) error
 	SendEmail(ctx context.Context, email *types.Email) error
 }
 
 type Cache interface {
-	SaveToken(ctx context.Context, token *string) error
+	SaveRedis(ctx context.Context, key, value *string) error
 	VerifyToken(ctx context.Context, token *string) error
 }
