@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"gin/config"
 	"time"
 
@@ -30,9 +31,9 @@ func NewRedisClient() (*Redis, error) {
 
 }
 
-func (r *Redis) SaveRedis(ctx context.Context, key, value *string) error {
+func (r *Redis) SaveRedis(ctx context.Context, key, value string) error {
 
-	err := r.conn.Set(*key, value, 10*time.Minute).Err()
+	err := r.conn.Set(key, value, 10*time.Minute).Err()
 
 	if err != nil {
 		return err
@@ -42,6 +43,19 @@ func (r *Redis) SaveRedis(ctx context.Context, key, value *string) error {
 
 }
 
-func (r *Redis) VerifyToken(ctx context.Context, token *string) error {
+func (r *Redis) VerifyToken(ctx context.Context, token, email string) error {
+
+	value, err := r.conn.Get(token).Result()
+
+	if err != nil {
+		return err
+	}
+
+	matchValue := value == email
+
+	if !matchValue {
+		return fmt.Errorf("email not true")
+	}
+
 	return nil
 }
