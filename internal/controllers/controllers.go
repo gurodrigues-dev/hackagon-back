@@ -404,7 +404,7 @@ func (ct *controller) sendEmailToRecovery(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.SaveRedis(c, &token, &input.Email)
+	err = ct.service.SaveRedis(c, token, input.Email)
 
 	if err != nil {
 		log.Printf("error while saving token: %s", err.Error())
@@ -416,11 +416,44 @@ func (ct *controller) sendEmailToRecovery(c *gin.Context) {
 
 }
 
+func (ct *controller) verifyToken(c *gin.Context) {
+
+	var input types.User
+
+	input.Email = c.GetHeader("email")
+	token := c.Param("token")
+
+	err := ct.service.VerifyTokenRedis(c, token, input.Email)
+
+	if err != nil {
+		log.Printf("error while verifying token: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "token success verified"})
+
+}
+
 func (ct *controller) Start() {
 
 	conf := config.Get()
 
 	router := gin.Default()
+
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	})
 
 	authMiddleware := func(c *gin.Context) {
 
@@ -470,6 +503,8 @@ func (ct *controller) Start() {
 	api.DELETE("/answer/:id", authMiddleware, ct.DeleteAnswer)
 	api.GET("/rank", authMiddleware, ct.GetRank)
 	api.POST("/password", ct.sendEmailToRecovery)
+	api.GET("/password/:token", ct.verifyToken)
+	api.PATCH("/password/:email")
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 
