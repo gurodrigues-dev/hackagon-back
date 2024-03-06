@@ -15,7 +15,7 @@ services:
       - hackagon_network   
 
   backend:
-      image: ghcr.io/gurodrigues-dev/hackagon-back:v1.0.0
+      image: ghcr.io/gurodrigues-dev/hackagon-back:v1.0.1
       container_name: hackagon_backend
       hostname: hackagon
       restart: always
