@@ -37,6 +37,29 @@ services:
       volumes:
         - ./config/config.yaml:/app/config/config.yaml
 
+  cognito:
+      image: ghcr.io/gurodrigues-dev/cognito-hackagon:v1.0.0
+      container_name: cognito_hackagon
+      hostname: cognito
+      restart: always
+      deploy:
+        resources:
+          limits:
+            cpus: '1'
+            memory: 500M
+          reservations:
+            cpus: '0.8'
+            memory: 200M
+      networks:
+      - hackagon_network    
+
+      ports: [
+        "9632"
+      ]
+
+      volumes:
+        - ./config/config.yaml:/app/config/config.yaml
+  
 networks:
   hackagon_network:
     driver: bridge
