@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"gin/config"
+	"gin/types"
+	"log"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -58,4 +60,28 @@ func (r *Redis) VerifyToken(ctx context.Context, token, email string) error {
 	}
 
 	return nil
+}
+
+func (r *Redis) VerifyCognitoUser(ctx context.Context, cognitoUser *types.Question) error {
+
+	username, err := r.conn.Get("username").Result()
+
+	if err != nil {
+		log.Printf("error while searching username")
+		return err
+	}
+
+	password, err := r.conn.Get("password").Result()
+
+	if err != nil {
+		log.Printf("error while searching password")
+		return err
+	}
+
+	if username != cognitoUser.UsernameCognito || password != cognitoUser.PasswordCognito {
+		return fmt.Errorf("cognito authentication failed")
+	}
+
+	return nil
+
 }

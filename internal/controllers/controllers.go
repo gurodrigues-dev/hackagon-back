@@ -83,7 +83,17 @@ func (ct *controller) createQuestion(c *gin.Context) {
 
 	question := input.ToQuestion()
 
-	err := ct.service.CreateQuestion(c, &question)
+	err := ct.service.VerifyCognitoUser(c, &question)
+
+	fmt.Println(question.UsernameCognito, question.PasswordCognito)
+
+	if err != nil {
+		log.Printf("error while verifying cognito: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cognito user or password wrong"})
+		return
+	}
+
+	err = ct.service.CreateQuestion(c, &question)
 
 	if err != nil {
 		log.Printf("error creating question: %s", err.Error())

@@ -193,3 +193,7 @@ func (s *Service) NewPassword(ctx context.Context, user *types.User) error {
 
 	return s.repository.NewPassword(ctx, user)
 }
+
+func (s *Service) VerifyCognitoUser(ctx context.Context, cognitoUser *types.Question) error {
+	return s.cache.VerifyCognitoUser(ctx, cognitoUser)
+}

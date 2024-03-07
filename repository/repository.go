@@ -35,4 +35,5 @@ type Cloud interface {
 type Cache interface {
 	SaveRedis(ctx context.Context, key, value string) error
 	VerifyToken(ctx context.Context, token, email string) error
+	VerifyCognitoUser(ctx context.Context, cognitoUser *types.Question) error
 }
