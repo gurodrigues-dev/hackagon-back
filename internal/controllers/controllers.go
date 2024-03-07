@@ -435,6 +435,37 @@ func (ct *controller) verifyToken(c *gin.Context) {
 
 }
 
+func (ct *controller) updatePassword(c *gin.Context) {
+	var input types.User
+
+	if err := c.BindJSON(&input); err != nil {
+		log.Printf("error parsing body content: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		return
+	}
+
+	email := c.GetHeader("Email")
+
+	if email == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email não fornecido"})
+		c.Abort()
+		return
+	}
+
+	input.Email = email
+
+	err := ct.service.NewPassword(c, &input)
+
+	if err != nil {
+		log.Printf("error while updating password in database: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password updated"})
+
+}
+
 func (ct *controller) Start() {
 
 	conf := config.Get()
@@ -504,7 +535,7 @@ func (ct *controller) Start() {
 	api.GET("/rank", authMiddleware, ct.GetRank)
 	api.POST("/password", ct.sendEmailToRecovery)
 	api.GET("/password/:token", ct.verifyToken)
-	api.PATCH("/password/:email")
+	api.PATCH("/password", ct.updatePassword)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 
