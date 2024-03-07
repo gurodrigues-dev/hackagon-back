@@ -286,8 +286,11 @@ func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank,
 	return ranks, nil
 }
 
-func (p *Postgres) NewPassword(ctx context.Context, password *string) error {
-	return nil
+func (p *Postgres) NewPassword(ctx context.Context, user *types.User) error {
+	sqlQuery := `UPDATE users SET password = $1 WHERE email = $2`
+
+	_, err := p.conn.Exec(sqlQuery, user.Password, user.Email)
+	return err
 }
 
 func (p *Postgres) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {
