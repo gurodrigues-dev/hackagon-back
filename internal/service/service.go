@@ -186,3 +186,10 @@ func (s *Service) SaveRedis(ctx context.Context, key, value string) error {
 func (s *Service) VerifyTokenRedis(ctx context.Context, token, email string) error {
 	return s.cache.VerifyToken(ctx, token, email)
 }
+
+func (s *Service) NewPassword(ctx context.Context, user *types.User) error {
+
+	user.Password = user.HashPassword()
+
+	return s.repository.NewPassword(ctx, user)
+}
