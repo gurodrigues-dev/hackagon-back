@@ -29,6 +29,11 @@ type Rank struct {
 	Position int    `json:"position"`
 }
 
+type Cognito struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (u *User) HashPassword() string {
 	hasher := sha256.New()
 	hasher.Write([]byte(u.Password))
