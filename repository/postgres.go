@@ -7,6 +7,7 @@ import (
 	"gin/config"
 	"gin/types"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -39,7 +40,27 @@ func NewPostgres() (*Postgres, error) {
 		conn: db,
 	}
 
+	err = repo.migrate(conf.Database.Schema)
+	if err != nil {
+		return nil, err
+	}
+
 	return repo, nil
+}
+
+func (p *Postgres) migrate(filepath string) error {
+
+	schema, err := os.ReadFile(filepath)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.conn.Exec(string(schema))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question) error {
