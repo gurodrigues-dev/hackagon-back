@@ -30,6 +30,7 @@ type Repository interface {
 type Cloud interface {
 	CheckEmail(ctx context.Context, email *string) error
 	SendEmail(ctx context.Context, email *types.Email) error
+	SaveImageBucket(ctx context.Context, title *string) (string, error)
 }
 
 type Cache interface {

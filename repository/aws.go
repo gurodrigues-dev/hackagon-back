@@ -100,3 +100,8 @@ func (a *AWS) SendEmail(ctx context.Context, email *types.Email) error {
 	return nil
 
 }
+
+func (a *AWS) SaveImageBucket(ctx context.Context, title *string) (string, error) {
+
+	return "", nil
+}
