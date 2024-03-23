@@ -17,7 +17,7 @@ type Repository interface {
 	ReadUser(ctx context.Context, id *int) (*types.User, error)
 	UpdateUser(ctx context.Context, id *int) error
 	DeleteUser(ctx context.Context, nickname *string) error
-	VerifyLogin(ctx context.Context, user *types.User) error
+	VerifyLogin(ctx context.Context, user *types.User) (*types.User, error)
 	CreateAnswer(ctx context.Context, answer *types.Answer) error
 	DeleteAnswer(ctx context.Context, id uuid.UUID) error
 	VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error)
