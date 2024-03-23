@@ -77,7 +77,7 @@ func (s *Service) DeleteUser(ctx context.Context, nickname *string) error {
 	return s.repository.DeleteUser(ctx, nickname)
 }
 
-func (s *Service) VerifyLogin(ctx context.Context, user *types.User) error {
+func (s *Service) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
 
 	user.Password = user.HashPassword()
 
