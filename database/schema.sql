@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    id UUID,
+    id SERIAL,
     nickname TEXT PRIMARY KEY,
     email TEXT,
     password TEXT,
