@@ -26,7 +26,7 @@ func (ct *controller) AuthUser(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.VerifyLogin(c, &input)
+	user, err := ct.service.VerifyLogin(c, &input)
 
 	if err != nil {
 		log.Printf("wrong nickname or password: %s", err.Error())
@@ -42,7 +42,10 @@ func (ct *controller) AuthUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": jwt})
+	c.JSON(http.StatusOK, gin.H{
+		"token": jwt,
+		"user":  user,
+	})
 
 }
 
