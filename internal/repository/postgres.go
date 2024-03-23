@@ -195,23 +195,24 @@ func (p *Postgres) DeleteUser(ctx context.Context, nickname *string) error {
 	return nil
 }
 
-func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) error {
-	var password string
-
-	sql := `SELECT password FROM users WHERE nickname = $1`
-
-	err := p.conn.QueryRow(sql, user.Nickname).Scan(&password)
-	if err != nil {
-		return err
+func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
+	sqlQuery := `SELECT id, nickname, email, password WHERE nickname = $1 LIMIT 1`
+	var userData types.User
+	err := p.conn.QueryRow(sqlQuery, user.Email).Scan(
+		&userData.ID,
+		&userData.Nickname,
+		&userData.Email,
+		&userData.Password,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
 	}
-
-	match := password == user.Password
-
+	match := userData.Password == user.Password
 	if !match {
-		return fmt.Errorf("nickname or password wrong")
+		return nil, fmt.Errorf("email or password wrong")
 	}
-
-	return nil
+	userData.Password = ""
+	return &userData, nil
 
 }
 
