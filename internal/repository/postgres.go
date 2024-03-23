@@ -196,9 +196,9 @@ func (p *Postgres) DeleteUser(ctx context.Context, nickname *string) error {
 }
 
 func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
-	sqlQuery := `SELECT id, nickname, email, password WHERE nickname = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nickname, email, password FROM users WHERE nickname = $1 LIMIT 1`
 	var userData types.User
-	err := p.conn.QueryRow(sqlQuery, user.Email).Scan(
+	err := p.conn.QueryRow(sqlQuery, user.Nickname).Scan(
 		&userData.ID,
 		&userData.Nickname,
 		&userData.Email,
