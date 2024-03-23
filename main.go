@@ -3,8 +3,8 @@ package main
 import (
 	"gin/config"
 	"gin/internal/controllers"
+	"gin/internal/repository"
 	"gin/internal/service"
-	"gin/repository"
 	"log"
 )
 

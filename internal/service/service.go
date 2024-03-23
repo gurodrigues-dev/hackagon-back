@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"gin/config"
-	"gin/repository"
+	"gin/internal/repository"
 	"gin/types"
 	"math/big"
 	"time"
