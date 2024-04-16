@@ -147,7 +147,7 @@ func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
 }
 
 func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
-	sqlQuery := `SELECT id, nickname, email FROM users WHERE id = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nickname, email, points FROM users WHERE id = $1 LIMIT 1`
 
 	var user types.User
 
@@ -155,6 +155,7 @@ func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
 		&user.ID,
 		&user.Nickname,
 		&user.Email,
+		&user.Points,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -196,13 +197,14 @@ func (p *Postgres) DeleteUser(ctx context.Context, nickname *string) error {
 }
 
 func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
-	sqlQuery := `SELECT id, nickname, email, password FROM users WHERE nickname = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nickname, email, password, points FROM users WHERE nickname = $1 LIMIT 1`
 	var userData types.User
 	err := p.conn.QueryRow(sqlQuery, user.Nickname).Scan(
 		&userData.ID,
 		&userData.Nickname,
 		&userData.Email,
 		&userData.Password,
+		&userData.Points,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
