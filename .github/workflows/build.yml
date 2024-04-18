@@ -32,6 +32,9 @@ jobs:
 
       - name: Update hackagon-infra repository
         run: |
+          git config --global user.email "gustavorodrigueslima2004@gmail.com"
+          git config --global user.name "gurodrigues-dev"
+          git clone https://github.com/${INFRA_REPO}.git
           cd hackagon-infra
           docker-compose pull ${IMAGE_NAME}
 
