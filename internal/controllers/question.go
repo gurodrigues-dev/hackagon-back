@@ -85,13 +85,13 @@ func (ct *controller) getQuestion(c *gin.Context) {
 	}
 
 	if verify.Status == "SUCCESS" || verify.Status == "RUNNING" {
-		log.Println("It was not possible to answer the question, this user has already answered this question")
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message":                  "It was not possible to answer the question, this user has already answered this question",
-			"currentStatus":            verify.Status,
-			"currentResponseCreatedAt": verify.CreatedAt,
-		})
+
+		question.AnswerQuestion = true
+
+		c.JSON(http.StatusOK, question)
+
 		return
+
 	}
 
 	c.JSON(http.StatusOK, question)

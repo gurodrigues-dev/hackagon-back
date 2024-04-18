@@ -24,6 +24,7 @@ type Question struct {
 	Inputs          Inputs    `json:"inputs"`
 	UsernameCognito string    `json:"username"`
 	PasswordCognito string    `json:"password"`
+	AnswerQuestion  bool      `json:"answer"`
 }
 
 type QuestionCreateRequest struct {
