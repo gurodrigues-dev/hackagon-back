@@ -3,7 +3,7 @@ name: Publish version
 on:
   push:
     tags:
-      - "*"
+      - "teste"
 
 jobs:
   publish-docker-image:
@@ -14,37 +14,16 @@ jobs:
 
     env:
       IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
-      INFRA_DIRECTORY: /hackagon-infra
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Build docker image
-        run: |
-          docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
+        run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
 
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
       - name: Publish docker image
         run: docker push --all-tags ${IMAGE_NAME}
-
-      - name: Update hackagon-infra repository
-        run: |
-          git config --global user.email "gustavorodrigueslima2004@gmail.com"
-          git config --global user.name "gurodrigues-dev"
-          git clone https://github.com/${INFRA_REPO}.git
-          cd hackagon-infra
-          docker-compose pull ${IMAGE_NAME}
-
-      - name: SSH into VM and update docker-compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.INFRA_VM_IP }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd ${{ env.INFRA_DIRECTORY }}
-            git pull
-            docker-compose up --build -d
