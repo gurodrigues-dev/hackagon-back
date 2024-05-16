@@ -24,4 +24,4 @@ def create_new_tag(github_token, repo_name):
     print(f"Nova tag {new_tag} criada com sucesso.")
 
 if __name__ == '__main__':
-    create_new_tag(github_token, repository_source)
+    create_new_tag(github_token, "gurodrigues-dev/hackagon-back")

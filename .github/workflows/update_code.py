@@ -48,4 +48,4 @@ def main(github_token, repo_source, repo_receiver):
 
 if __name__ == '__main__':
     
-    main(github_token, repository_source, repository_receiver)
+    main(github_token, "gurodrigues-dev/hackagon-back", "gurodrigues-dev/hackagon-back")
