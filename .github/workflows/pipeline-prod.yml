@@ -37,5 +37,5 @@ jobs:
     - name: Create and push new tag
       run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.KEY_CI_CD }} --repository ${{ secrets.REPOSITORY_SOURCE }}
 
-    - name: Run update_code.py
+    - name: Update infra, create and merge pull request
       run: python .github/workflows/update_code.py --github-token ${{ secrets.KEY_CI_CD }} --repository-source ${{ secrets.REPOSITORY_SOURCE }} --repository-receiver ${{ secrets.REPOSITORY_RECEIVER }}
