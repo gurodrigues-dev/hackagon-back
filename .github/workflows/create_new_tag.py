@@ -44,8 +44,8 @@ def main(github_token, repo_source, repo_receiver):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Update docker-compose with the latest hackagon-back version.')
     parser.add_argument('--github-token', required=True, help='GitHub token for authentication')
-    parser.add_argument('--repository-source', required=True, help='Source repository (e.g., gurodriguesdev/hackagon-back)')
-    parser.add_argument('--repository-receiver', required=True, help='Receiver repository (e.g., gurodriguesdev/hackagon-infra)')
+    parser.add_argument('--source', required=True, help='Source repository (e.g., gurodriguesdev/hackagon-back)')
+    parser.add_argument('--receiver', required=True, help='Receiver repository (e.g., gurodriguesdev/hackagon-infra)')
     
     args = parser.parse_args()
     
