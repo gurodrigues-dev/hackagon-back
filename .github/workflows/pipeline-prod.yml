@@ -25,7 +25,7 @@ jobs:
       run: pip install PyGithub
 
     - name: Create and push new tag
-      run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.GITHUB_TOKEN }} --repository gurodrigues-dev/hackagon-back
+      run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.TOKEN }} --repository gurodrigues-dev/hackagon-back
 
   publish-docker-image:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
 
       - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+        run: echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
       - name: Publish docker image
         run: docker push --all-tags ${IMAGE_NAME}
@@ -68,11 +68,11 @@ jobs:
 
     - name: Run update_code.py
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TOKEN: ${{ secrets.TOKEN }}
         REPOSITORY_SOURCE: "gurodriguesdev/hackagon-back"
         REPOSITORY_RECEIVER: "gurodriguesdev/hackagon-infra"
       run: |
-        python .github/workflows/update_code.py --github-token $GITHUB_TOKEN --repository-source $REPOSITORY_SOURCE --repository-receiver $REPOSITORY_RECEIVER
+        python .github/workflows/update_code.py --github-token $TOKEN --repository-source $REPOSITORY_SOURCE --repository-receiver $REPOSITORY_RECEIVER
 
   deploy:
     runs-on: ubuntu-latest
