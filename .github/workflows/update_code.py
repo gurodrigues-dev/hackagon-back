@@ -4,7 +4,7 @@ import time
 import os
 from github import Github
 
-github_token = os.getenv('GITHUB_TOKEN')
+github_token = os.getenv('TOKEN')
 repository_source = os.getenv('REPOSITORY_SOURCE')
 repository_receiver = os.getenv('REPOSITORY_RECEIVER')
 
@@ -47,5 +47,5 @@ def main(github_token, repo_source, repo_receiver):
     print(f'Successfully updated hackagon-back to {latest_tag} and merged the pull request.')
 
 if __name__ == '__main__':
-    print(repository_source, repository_receiver)
+    print(github_token, repository_source, repository_receiver)
     main(github_token, repository_source, repository_receiver)

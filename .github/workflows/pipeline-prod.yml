@@ -18,7 +18,7 @@ jobs:
     env:
       IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TOKEN: ${{ secrets.TOKEN }}
       REPOSITORY_SOURCE: "gurodrigues-dev/hackagon-back"
       REPOSITORY_RECEIVER: "gurodrigues-dev/hackagon-infra"
 

@@ -2,7 +2,7 @@ import argparse
 import os
 from github import Github, InputGitAuthor
 
-github_token = os.getenv('GITHUB_TOKEN')
+github_token = os.getenv('TOKEN')
 repository_source = os.getenv('REPOSITORY_SOURCE')
 
 def create_new_tag(github_token, repo_name):
