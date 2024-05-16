@@ -30,5 +30,5 @@ def create_new_tag(python_key, repo_name):
 if __name__ == '__main__':
     print(repository_source)
     token = decrypt(python_key)
-    print(token)
+    # print(token)
     create_new_tag(token, repository_source)
