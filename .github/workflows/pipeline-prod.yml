@@ -17,9 +17,6 @@ jobs:
 
     env:
       IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
-      GITHUB_TOKEN: "TESTE"
-      PASSWORDCMD: "TESTE"
-      VMIP: "TESTE"
       REPOSITORY_SOURCE: ${{ secrets.REPOSITORY_SOURCE }}
       REPOSITORY_RECEIVER: "gurodrigues-dev/hackagon-infra"
 
@@ -40,17 +37,5 @@ jobs:
     - name: Create and push new tag
       run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.KEY_CI_CD }} --repository ${{ secrets.REPOSITORY_SOURCE }}
 
-    - name: Build docker image
-      run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
-
-    - name: Log in to registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-
-    - name: Publish docker image
-      run: docker push --all-tags ${IMAGE_NAME}
-
     - name: Run update_code.py
       run: python .github/workflows/update_code.py --github-token ${{ secrets.KEY_CI_CD }} --repository-source ${{ secrets.REPOSITORY_SOURCE }} --repository-receiver ${{ secrets.REPOSITORY_RECEIVER }}
-
-    - name: Run docker-compose up --build on VM
-      run: sshpass -p ${{ secrets.PASSWORD_VM_IP }} ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /root/hackagon-infra && git pull && docker-compose up --build -d"
