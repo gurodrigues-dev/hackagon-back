@@ -20,7 +20,6 @@ jobs:
       GITHUB_TOKEN: "TESTE"
       PASSWORDCMD: "TESTE"
       VMIP: "TESTE"
-      KEYPYTHON: "Xm5p50BRCFGzo0rAhFDNofxZzvdng0nlN5eZ_phg"
       REPOSITORY_SOURCE: ${{ secrets.REPOSITORY_SOURCE }}
       REPOSITORY_RECEIVER: "gurodrigues-dev/hackagon-infra"
 
@@ -28,34 +27,30 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # - name: Set up Python
-    #   uses: actions/setup-python@v4
-    #   with:
-    #     python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-    - name: Validate envs
+    - name: Install dependencies
       run: |
-        echo $REPOSITORY_SOURCE | echo ${{ secrets.REPOSITORY_SOURCE }}
+        python -m pip install --upgrade pip
+        pip install PyGithub
 
-    # - name: Install dependencies
-    #   run: |
-    #     python -m pip install --upgrade pip
-    #     pip install PyGithub
+    - name: Create and push new tag
+      run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.KEY_CI_CD }} --repository ${{ secrets.REPOSITORY_SOURCE }}
 
-    # - name: Create and push new tag
-    #   run: python .github/workflows/create_new_tag.py
+    - name: Build docker image
+      run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
 
-    # - name: Build docker image
-    #   run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
-    # - name: Log in to registry
-    #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+    - name: Publish docker image
+      run: docker push --all-tags ${IMAGE_NAME}
 
-    # - name: Publish docker image
-    #   run: docker push --all-tags ${IMAGE_NAME}
+    - name: Run update_code.py
+      run: python .github/workflows/update_code.py --github-token ${GITHUB_TOKEN} --repository-source ${{ secrets.REPOSITORY_SOURCE }} --repository-receiver ${{ secrets.REPOSITORY_RECEIVER }}
 
-    # - name: Run update_code.py
-    #   run: python .github/workflows/update_code.py
-
-    # - name: Run docker-compose up --build on VM
-    #   run: sshpass -p "$PASSWORDCMD" ssh -o StrictHostKeyChecking=no root@"$VMIP" "cd /root/hackagon-infra && docker-compose up --build"
+    - name: Run docker-compose up --build on VM
+      run: sshpass -p ${{ secrets.PASSWORD_VM_IP }} ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /root/hackagon-infra && docker-compose up --build"
