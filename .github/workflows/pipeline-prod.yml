@@ -25,7 +25,9 @@ jobs:
       run: pip install PyGithub
 
     - name: Create and push new tag
-      run: python .github/workflows/create_new_tag.py --github-token "${{ secrets.TOKEN }}" --repository gurodrigues-dev/hackagon-back
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      run: python .github/workflows/create_new_tag.py --github-token $GITHUB_TOKEN --repository gurodrigues-dev/hackagon-back
 
   publish-docker-image:
     runs-on: ubuntu-latest
