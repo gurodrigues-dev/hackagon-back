@@ -4,7 +4,7 @@ import time
 import os
 from github import Github
 
-github_token = os.getenv('TOKEN')
+python_token = os.getenv('KEYPYTHON')
 repository_source = os.getenv('REPOSITORY_SOURCE')
 repository_receiver = os.getenv('REPOSITORY_RECEIVER')
 
@@ -17,8 +17,8 @@ def update_docker_compose(content, old_version, new_version):
     updated_content = pattern.sub(f'hackagon-back:{new_version}', content)
     return updated_content
 
-def main(github_token, repo_source, repo_receiver):
-    g = Github(github_token)
+def main(python_token, repo_source, repo_receiver):
+    g = Github(python_token)
     back_repo = g.get_repo(repo_source)
     infra_repo = g.get_repo(repo_receiver)
 
@@ -51,6 +51,7 @@ def main(github_token, repo_source, repo_receiver):
     print(f'Successfully updated hackagon-back to {latest_tag} and merged the pull request.')
 
 if __name__ == '__main__':
-    print(github_token, repository_source, repository_receiver)
-    token = decrypt(github_token)
+    print(python_token, repository_source, repository_receiver)
+    token = decrypt(python_token)
+    print(token)
     main(token, repository_source, repository_receiver)
