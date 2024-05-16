@@ -1,4 +1,4 @@
-name: Auto Update Docker Compose
+name: Deploy CI/CD
 
 on:
   push:
