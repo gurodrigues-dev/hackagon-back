@@ -1,0 +1,82 @@
+name: Auto Update Docker Compose
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  create_and_push_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install PyGithub
+
+    - name: Create and push new tag
+      run: python .github/workflows/create_new_tag.py --github-token ${{ secrets.GITHUB_TOKEN }} --repository gurodrigues-dev/hackagon-back
+
+  publish-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    env:
+      IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build docker image
+        run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Publish docker image
+        run: docker push --all-tags ${IMAGE_NAME}
+
+  update_docker_compose:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PyGithub
+
+    - name: Run update_code.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY_SOURCE: "gurodriguesdev/hackagon-back"
+        REPOSITORY_RECEIVER: "gurodriguesdev/hackagon-infra"
+      run: |
+        python .github/workflows/update_code.py --github-token $GITHUB_TOKEN --repository-source $REPOSITORY_SOURCE --repository-receiver $REPOSITORY_RECEIVER
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Run docker-compose up --build on VM
+      run: sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /path/to/docker-compose && docker-compose up --build"
