@@ -18,6 +18,8 @@ jobs:
     env:
       IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PASSWORDCMD: ${{ secrets.SSH_PASSWORD }}
+      VMIP: ${{ secrets.VM_IP }}
       KEYPYTHON: "Xm5p50BRCFGzo0rAhFDNofxZzvdng0nlN5eZ_phg"
       REPOSITORY_SOURCE: "gurodrigues-dev/hackagon-back"
       REPOSITORY_RECEIVER: "gurodrigues-dev/hackagon-infra"
@@ -52,4 +54,5 @@ jobs:
       run: python .github/workflows/update_code.py
 
     - name: Run docker-compose up --build on VM
-      run: sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /path/to/docker-compose && docker-compose up --build"
+    - shell: bash
+      run: sshpass -p "$env:PASSWORDCMD" ssh -o StrictHostKeyChecking=no root@"$env:VMIP" "cd /root/hackagon-infra && docker-compose up --build"
