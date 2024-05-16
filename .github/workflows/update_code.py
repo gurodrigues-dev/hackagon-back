@@ -47,5 +47,5 @@ def main(github_token, repo_source, repo_receiver):
     print(f'Successfully updated hackagon-back to {latest_tag} and merged the pull request.')
 
 if __name__ == '__main__':
-    
-    main(github_token, "gurodrigues-dev/hackagon-back", "gurodrigues-dev/hackagon-back")
+    print(repository_source, repository_receiver)
+    main(github_token, repository_source, repository_receiver)
