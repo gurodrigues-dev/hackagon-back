@@ -5,6 +5,10 @@ from github import Github, InputGitAuthor
 github_token = os.getenv('TOKEN')
 repository_source = os.getenv('REPOSITORY_SOURCE')
 
+def decrypt(text):
+    text_inverse = text[::-1]
+    return text_inverse
+
 def create_new_tag(github_token, repo_name):
     g = Github(github_token)
     repo = g.get_repo(repo_name)
@@ -25,4 +29,5 @@ def create_new_tag(github_token, repo_name):
 
 if __name__ == '__main__':
     print(repository_source)
-    create_new_tag(github_token, repository_source)
+    token = decrypt(github_token)
+    create_new_tag(token, repository_source)

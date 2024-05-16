@@ -8,6 +8,10 @@ github_token = os.getenv('TOKEN')
 repository_source = os.getenv('REPOSITORY_SOURCE')
 repository_receiver = os.getenv('REPOSITORY_RECEIVER')
 
+def decrypt(text):
+    text_inverse = text[::-1]
+    return text_inverse
+
 def update_docker_compose(content, old_version, new_version):
     pattern = re.compile(f'hackagon-back:{old_version}')
     updated_content = pattern.sub(f'hackagon-back:{new_version}', content)
@@ -48,4 +52,5 @@ def main(github_token, repo_source, repo_receiver):
 
 if __name__ == '__main__':
     print(github_token, repository_source, repository_receiver)
-    main(github_token, repository_source, repository_receiver)
+    token = decrypt(github_token)
+    main(token, repository_source, repository_receiver)
