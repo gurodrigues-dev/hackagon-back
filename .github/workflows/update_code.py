@@ -1,7 +1,12 @@
 import argparse
 import re
 import time
+import os
 from github import Github
+
+github_token = os.getenv('GITHUB_TOKEN')
+repository_source = os.getenv('REPOSITORY_SOURCE')
+repository_receiver = os.getenv('REPOSITORY_RECEIVER')
 
 def update_docker_compose(content, old_version, new_version):
     pattern = re.compile(f'hackagon-back:{old_version}')
@@ -42,11 +47,5 @@ def main(github_token, repo_source, repo_receiver):
     print(f'Successfully updated hackagon-back to {latest_tag} and merged the pull request.')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Update docker-compose with the latest hackagon-back version.')
-    parser.add_argument('--github-token', required=True, help='GitHub token for authentication')
-    parser.add_argument('--repository-source', required=True, help='Source repository (e.g., gurodriguesdev/hackagon-back)')
-    parser.add_argument('--repository-receiver', required=True, help='Receiver repository (e.g., gurodriguesdev/hackagon-infra)')
     
-    args = parser.parse_args()
-    
-    main(args.github_token, args.repository_source, args.repository_receiver)
+    main(github_token, repository_source, repository_receiver)

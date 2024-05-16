@@ -17,8 +17,8 @@ jobs:
 
     env:
       IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
-      GITHUB_TOKEN: ${{ secrets.TOKEN }}
-      TOKEN: ${{ secrets.TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPOSITORY_SOURCE: "gurodriguesdev/hackagon-back"
       REPOSITORY_RECEIVER: "gurodriguesdev/hackagon-infra"
 
@@ -37,19 +37,19 @@ jobs:
         pip install PyGithub
 
     - name: Create and push new tag
-      run: python .github/workflows/create_new_tag.py --github-token ${GITHUB_TOKEN} --repository gurodrigues-dev/hackagon-back
+      run: echo $TOKEN | python .github/workflows/create_new_tag.py --github-token $GITHUB_TOKEN --repository gurodrigues-dev/hackagon-back
 
     - name: Build docker image
       run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
 
     - name: Log in to registry
-      run: echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
     - name: Publish docker image
       run: docker push --all-tags ${IMAGE_NAME}
 
     - name: Run update_code.py
-      run: python .github/workflows/update_code.py --github-token $TOKEN --repository-source $REPOSITORY_SOURCE --repository-receiver $REPOSITORY_RECEIVER
+      run: python .github/workflows/update_code.py --github-token ${GITHUB_TOKEN} --repository-source $REPOSITORY_SOURCE --repository-receiver $REPOSITORY_RECEIVER
 
     - name: Run docker-compose up --build on VM
       run: sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /path/to/docker-compose && docker-compose up --build"
