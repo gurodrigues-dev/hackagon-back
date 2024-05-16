@@ -53,4 +53,4 @@ jobs:
       run: python .github/workflows/update_code.py --github-token ${{ secrets.KEY_CI_CD }} --repository-source ${{ secrets.REPOSITORY_SOURCE }} --repository-receiver ${{ secrets.REPOSITORY_RECEIVER }}
 
     - name: Run docker-compose up --build on VM
-      run: sshpass -p ${{ secrets.PASSWORD_VM_IP }} ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /root/hackagon-infra && docker-compose up --build -d"
+      run: sshpass -p ${{ secrets.PASSWORD_VM_IP }} ssh -o StrictHostKeyChecking=no root@${{ secrets.VM_IP }} "cd /root/hackagon-infra && git pull && docker-compose up --build -d"
