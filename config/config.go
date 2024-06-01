@@ -26,6 +26,7 @@ type Database struct {
 	Host     string `yaml:"dbhost"`
 	Password string `yaml:"dbpassword"`
 	Name     string `yaml:"dbname"`
+	Schema   string `yaml:"schema"`
 }
 
 type Cloud struct {

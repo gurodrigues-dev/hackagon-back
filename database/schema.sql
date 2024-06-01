@@ -1,32 +1,37 @@
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    nickname VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(100) NOT NULL,
-    point INTEGER
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL,
+    nickname TEXT PRIMARY KEY,
+    email TEXT,
+    password TEXT,
+    points INTEGER DEFAULT 0
 );
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE IF NOT EXISTS questions (
+    id UUID PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    date DATE NOT NULL,
+    level TEXT NOT NULL,
+    params1 TEXT NOT NULL,
+    response1 TEXT NOT NULL,
+    params2 TEXT NOT NULL,
+    response2 TEXT NOT NULL,
+    params3 TEXT NOT NULL,
+    response3 TEXT NOT NULL
+);
 
-CREATE TABLE questions (
-    question_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    date DATE,
-    level INTEGER,
-    params1 TEXT,
-    response1 TEXT,
-    params2 TEXT,
-    response2 TEXT,
-    params3 TEXT,
-    response3 TEXT
-    );
-
-CREATE TABLE answers (
-    answers_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    nickname VARCHAR(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS answers (
+    id UUID PRIMARY KEY NOT NULL,
+    nickname TEXT NOT NULL,
     questionid UUID NOT NULL,
-    status VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (questionid) REFERENCES questions(id)
+);
+
+CREATE TABLE IF NOT EXISTS cognito (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
 );
 

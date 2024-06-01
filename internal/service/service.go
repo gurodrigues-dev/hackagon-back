@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"gin/config"
-	"gin/repository"
+	"gin/internal/repository"
 	"gin/types"
 	"math/big"
 	"time"
@@ -77,7 +77,7 @@ func (s *Service) DeleteUser(ctx context.Context, nickname *string) error {
 	return s.repository.DeleteUser(ctx, nickname)
 }
 
-func (s *Service) VerifyLogin(ctx context.Context, user *types.User) error {
+func (s *Service) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
 
 	user.Password = user.HashPassword()
 
@@ -185,4 +185,15 @@ func (s *Service) SaveRedis(ctx context.Context, key, value string) error {
 
 func (s *Service) VerifyTokenRedis(ctx context.Context, token, email string) error {
 	return s.cache.VerifyToken(ctx, token, email)
+}
+
+func (s *Service) NewPassword(ctx context.Context, user *types.User) error {
+
+	user.Password = user.HashPassword()
+
+	return s.repository.NewPassword(ctx, user)
+}
+
+func (s *Service) VerifyCognitoUser(ctx context.Context, cognitoUser *types.Question) error {
+	return s.cache.VerifyCognitoUser(ctx, cognitoUser)
 }

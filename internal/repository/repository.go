@@ -17,22 +17,24 @@ type Repository interface {
 	ReadUser(ctx context.Context, id *int) (*types.User, error)
 	UpdateUser(ctx context.Context, id *int) error
 	DeleteUser(ctx context.Context, nickname *string) error
-	VerifyLogin(ctx context.Context, user *types.User) error
+	VerifyLogin(ctx context.Context, user *types.User) (*types.User, error)
 	CreateAnswer(ctx context.Context, answer *types.Answer) error
 	DeleteAnswer(ctx context.Context, id uuid.UUID) error
 	VerifyAnswer(ctx context.Context, question *types.Question, nickname *string) (*types.Answer, error)
 	IncreaseScore(ctx context.Context, nickname *string, points *int) error
 	GetRank(ctx context.Context, nickname *string) ([]types.Rank, error)
-	NewPassword(ctx context.Context, password *string) error
+	NewPassword(ctx context.Context, user *types.User) error
 	VerifyEmailExists(ctx context.Context, email *string) (bool, error)
 }
 
 type Cloud interface {
 	CheckEmail(ctx context.Context, email *string) error
 	SendEmail(ctx context.Context, email *types.Email) error
+	SaveImageBucket(ctx context.Context, title *string) (string, error)
 }
 
 type Cache interface {
 	SaveRedis(ctx context.Context, key, value string) error
 	VerifyToken(ctx context.Context, token, email string) error
+	VerifyCognitoUser(ctx context.Context, cognitoUser *types.Question) error
 }

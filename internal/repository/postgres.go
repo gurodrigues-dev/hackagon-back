@@ -7,6 +7,7 @@ import (
 	"gin/config"
 	"gin/types"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -39,7 +40,27 @@ func NewPostgres() (*Postgres, error) {
 		conn: db,
 	}
 
+	err = repo.migrate(conf.Database.Schema)
+	if err != nil {
+		return nil, err
+	}
+
 	return repo, nil
+}
+
+func (p *Postgres) migrate(filepath string) error {
+
+	schema, err := os.ReadFile(filepath)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.conn.Exec(string(schema))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Postgres) CreateQuestion(ctx context.Context, question *types.Question) error {
@@ -126,7 +147,7 @@ func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
 }
 
 func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
-	sqlQuery := `SELECT id, nickname, email FROM users WHERE id = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nickname, email, points FROM users WHERE id = $1 LIMIT 1`
 
 	var user types.User
 
@@ -134,6 +155,7 @@ func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
 		&user.ID,
 		&user.Nickname,
 		&user.Email,
+		&user.Points,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -174,23 +196,25 @@ func (p *Postgres) DeleteUser(ctx context.Context, nickname *string) error {
 	return nil
 }
 
-func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) error {
-	var password string
-
-	sql := `SELECT password FROM users WHERE nickname = $1`
-
-	err := p.conn.QueryRow(sql, user.Nickname).Scan(&password)
-	if err != nil {
-		return err
+func (p *Postgres) VerifyLogin(ctx context.Context, user *types.User) (*types.User, error) {
+	sqlQuery := `SELECT id, nickname, email, password, points FROM users WHERE nickname = $1 LIMIT 1`
+	var userData types.User
+	err := p.conn.QueryRow(sqlQuery, user.Nickname).Scan(
+		&userData.ID,
+		&userData.Nickname,
+		&userData.Email,
+		&userData.Password,
+		&userData.Points,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
 	}
-
-	match := password == user.Password
-
+	match := userData.Password == user.Password
 	if !match {
-		return fmt.Errorf("nickname or password wrong")
+		return nil, fmt.Errorf("email or password wrong")
 	}
-
-	return nil
+	userData.Password = ""
+	return &userData, nil
 
 }
 
@@ -286,8 +310,11 @@ func (p *Postgres) GetRank(ctx context.Context, nickname *string) ([]types.Rank,
 	return ranks, nil
 }
 
-func (p *Postgres) NewPassword(ctx context.Context, password *string) error {
-	return nil
+func (p *Postgres) NewPassword(ctx context.Context, user *types.User) error {
+	sqlQuery := `UPDATE users SET password = $1 WHERE email = $2`
+
+	_, err := p.conn.Exec(sqlQuery, user.Password, user.Email)
+	return err
 }
 
 func (p *Postgres) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {

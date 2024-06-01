@@ -1,0 +1,57 @@
+name: Auto Update Docker Compose
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  main_job:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    env:
+      IMAGE_NAME: ghcr.io/gurodrigues-dev/hackagon-back
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PASSWORDCMD: ${{ secrets.SSH_PASSWORD }}
+      VMIP: ${{ secrets.VM_IP }}
+      KEYPYTHON: "Xm5p50BRCFGzo0rAhFDNofxZzvdng0nlN5eZ_phg"
+      REPOSITORY_SOURCE: "gurodrigues-dev/hackagon-back"
+      REPOSITORY_RECEIVER: "gurodrigues-dev/hackagon-infra"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PyGithub
+
+    - name: Create and push new tag
+      run: python .github/workflows/create_new_tag.py
+
+    - name: Build docker image
+      run: docker build . --file Dockerfile --tag ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${{ github.ref_name }}
+
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+    - name: Publish docker image
+      run: docker push --all-tags ${IMAGE_NAME}
+
+    - name: Run update_code.py
+      run: python .github/workflows/update_code.py
+
+    - name: Run docker-compose up --build on VM
+      run: sshpass -p "$PASSWORDCMD" ssh -o StrictHostKeyChecking=no root@"$VMIP" "cd /root/hackagon-infra && docker-compose up --build"

@@ -12,6 +12,7 @@ type User struct {
 	Nickname string `json:"nickname"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Points   int    `json:"points"`
 }
 
 type Answer struct {
