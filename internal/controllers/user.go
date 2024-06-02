@@ -59,6 +59,8 @@ func (ct *controller) createUser(c *gin.Context) {
 		return
 	}
 
+	log.Print(input)
+
 	exists, _ := ct.service.VerifyEmailExists(c, &input.Email)
 
 	if exists {

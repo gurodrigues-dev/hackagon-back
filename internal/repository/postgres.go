@@ -141,8 +141,8 @@ func (p *Postgres) DeleteQuestion(ctx context.Context, id uuid.UUID) error {
 }
 
 func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
-	sqlQuery := `INSERT INTO users (nickname, email, password) VALUES ($1, $2, $3)`
-	_, err := p.conn.Exec(sqlQuery, user.Nickname, user.Email, user.Password)
+	sqlQuery := `INSERT INTO users (nickname, email, password, profile_image) VALUES ($1, $2, $3, $4)`
+	_, err := p.conn.Exec(sqlQuery, user.Nickname, user.Email, user.Password, user.ProfileImage)
 	return err
 }
 
