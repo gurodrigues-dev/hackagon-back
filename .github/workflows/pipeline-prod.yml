@@ -1,15 +1,15 @@
 name: Deploy CI/CD
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
+    types:
+      - closed
     branches:
       - master
 
 jobs:
-  main_job:
+  deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       packages: write
