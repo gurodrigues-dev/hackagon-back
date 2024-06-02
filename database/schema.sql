@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     nickname TEXT PRIMARY KEY,
     email TEXT,
     password TEXT,
-    points INTEGER DEFAULT 0
+    points INTEGER DEFAULT 0,
+    profile_image TEXT DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS questions (
@@ -35,3 +36,4 @@ CREATE TABLE IF NOT EXISTS cognito (
     password TEXT NOT NULL
 );
 
+-- ALTER TABLE users ADD COLUMN profile_image TEXT DEFAULT null;
