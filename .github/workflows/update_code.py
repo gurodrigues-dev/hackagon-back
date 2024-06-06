@@ -3,6 +3,10 @@ import re
 import time
 from github import Github
 
+def version_key(tag):
+    """Converts a version string into a tuple of integers for comparison."""
+    return tuple(map(int, tag.lstrip('v').split('.')))
+
 def update_docker_compose(content, old_version, new_version):
     pattern = re.compile(f'hackagon-back:{old_version}')
     updated_content = pattern.sub(f'hackagon-back:{new_version}', content)
@@ -13,7 +17,7 @@ def main(github_token, repo_source, repo_receiver):
     back_repo = g.get_repo(repo_source)
     infra_repo = g.get_repo(repo_receiver)
 
-    tags = sorted(back_repo.get_tags(), key=lambda t: t.name, reverse=True)
+    tags = sorted(back_repo.get_tags(), key=lambda t: version_key(t.name), reverse=True)
     latest_tag = tags[0].name
     previous_tag = tags[1].name
     print(latest_tag, previous_tag)
