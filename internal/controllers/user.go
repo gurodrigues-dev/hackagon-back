@@ -158,7 +158,7 @@ func (ct *controller) updatePassword(c *gin.Context) {
 		return
 	}
 
-	email := c.GetHeader("Email")
+	email := c.GetHeader("account")
 
 	if email == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email não fornecido"})
@@ -262,7 +262,7 @@ func (ct *controller) verifyToken(c *gin.Context) {
 
 	var input types.User
 
-	input.Email = c.GetHeader("email")
+	input.Email = c.GetHeader("account")
 	token := c.Param("token")
 
 	err := ct.service.VerifyTokenRedis(c, token, input.Email)
