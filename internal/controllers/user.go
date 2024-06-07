@@ -160,6 +160,8 @@ func (ct *controller) updatePassword(c *gin.Context) {
 
 	email := c.GetHeader("account")
 
+	log.Print(email)
+
 	if email == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email não fornecido"})
 		c.Abort()
@@ -167,6 +169,8 @@ func (ct *controller) updatePassword(c *gin.Context) {
 	}
 
 	input.Email = email
+
+	log.Print(input.Email)
 
 	err := ct.service.NewPassword(c, &input)
 

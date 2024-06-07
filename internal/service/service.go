@@ -7,6 +7,7 @@ import (
 	"gin/config"
 	"gin/internal/repository"
 	"gin/types"
+	"log"
 	"math/big"
 	"time"
 
@@ -189,7 +190,11 @@ func (s *Service) VerifyTokenRedis(ctx context.Context, token, email string) err
 
 func (s *Service) NewPassword(ctx context.Context, user *types.User) error {
 
+	log.Print(user.Password)
+
 	user.Password = user.HashPassword()
+
+	log.Print(user.Password)
 
 	return s.repository.NewPassword(ctx, user)
 }
